@@ -1,6 +1,7 @@
 import { createApp } from "vue";
 import { createRouter, createWebHistory } from "vue-router";
 import App from "./App.vue";
+import TheLogin from "./pages/TheLogin.vue";
 import TheRegistration from "./pages/TheRegistration.vue";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -17,6 +18,11 @@ const routes = [
   {
     path: "/auth",
     name: "Authorization",
+    component: TheLogin,
+  },
+  {
+    path: "/register",
+    name: "Registration",
     component: TheRegistration,
   },
 ];

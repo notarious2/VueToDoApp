@@ -3,32 +3,29 @@
     <div class="post-it">
       <form @submit.prevent="submitAuthDetails">
         <div class="container">
-          <h1>Register</h1>
+          <h1>Login</h1>
           <div class="icon-div">
-            <font-awesome-icon icon="fas fa-user" class="fa-icons" />
-            <input type="text" placeholder="Name" required v-model="name" />
-          </div>
-          <div class="icon-div">
-            <font-awesome-icon icon="far fa-envelope" class="fa-icons" />
-            <input type="text" placeholder="Email" required v-model="email" />
-          </div>
-          <div class="icon-div">
+            <!-- <label for="uname">Username</label> -->
             <font-awesome-icon icon="far fa-user" class="fa-icons" />
             <input
               type="text"
               placeholder="Username"
+              name="uname"
               required
               v-model="username"
             />
           </div>
           <div class="icon-div">
+            <!-- <label for="psw">Password</label> -->
             <font-awesome-icon icon="fas fa-key" class="fa-icons" />
+
             <input
               id="inline-input"
               :type="passwordType"
               placeholder="Password"
-              v-model="password"
+              name="psw"
               required
+              v-model="password"
             />
             <a id="icon" @click="toggleShow">
               <font-awesome-icon
@@ -38,25 +35,7 @@
               <font-awesome-icon v-else :icon="['fas', 'fa-eye-slash']" />
             </a>
           </div>
-          <div class="icon-div">
-            <font-awesome-icon
-              id="password-confirmation"
-              icon="fas fa-unlock"
-              class="fa-icons"
-              :class="
-                passwordsMatch
-                  ? 'password-is-confirmed'
-                  : 'password-not-confirmed'
-              "
-            />
-            <input
-              :type="passwordType"
-              placeholder="Verify Password"
-              v-model="passwordConfirmation"
-              required
-            />
-          </div>
-          <button class="button-74" type="submit">Register</button>
+          <button class="button-74" type="submit">Login</button>
         </div>
       </form>
     </div>
@@ -64,20 +43,14 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
-import { useRouter } from "vue-router";
+import { ref } from "vue";
 import axios from "axios";
 
-const router = useRouter();
-
-const name = ref("");
-const email = ref("");
 const username = ref("");
 const password = ref("");
-const passwordConfirmation = ref("");
-const showPassword = ref("");
+const showPassword = ref(false);
 const passwordType = ref("password");
-const passwordsMatch = ref(false);
+let success = ref(false);
 
 function toggleShow() {
   showPassword.value = !showPassword.value;
@@ -88,43 +61,31 @@ function toggleShow() {
   }
 }
 function submitAuthDetails() {
-  const params = {
-    name: name.value,
-    email: email.value,
-    username: username.value,
-    password: password.value,
-  };
+  const params = new URLSearchParams();
+  params.append("username", username.value);
+  params.append("password", password.value);
 
+  const headers = {
+    Accept: "application/json",
+    "Content-Type": "application/x-www-form-urlencoded",
+  };
   axios
-    .post("http://localhost:8000/user", params)
+    .post("http://localhost:8000/login", params, {
+      headers: headers,
+    })
     .then((response) => {
+      success.value = true;
       console.log(response.data);
-      router.push({ path: "/auth" });
     })
     .catch((error) => {
       console.log(error);
     });
 }
-
-watch([password, passwordConfirmation], () => {
-  if (passwordConfirmation.value !== password.value) {
-    passwordsMatch.value = false;
-  } else {
-    passwordsMatch.value = true;
-  }
-});
 </script>
 
 <style scoped>
 * {
   font-family: "Kalam", cursive;
-}
-
-.password-is-confirmed {
-  color: green;
-}
-.password-not-confirmed {
-  color: red;
 }
 
 .container {
