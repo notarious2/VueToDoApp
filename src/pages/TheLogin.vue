@@ -44,8 +44,12 @@
 
 <script setup>
 import { ref } from "vue";
+import { useAuthStore } from "@/stores/userAuth";
 import axios from "axios";
+import { useRouter } from "vue-router";
+const router = useRouter();
 
+const authStore = useAuthStore();
 const username = ref("");
 const password = ref("");
 const showPassword = ref(false);
@@ -75,7 +79,10 @@ function submitAuthDetails() {
     })
     .then((response) => {
       success.value = true;
-      console.log(response.data);
+      // console.log(response.data["access_token"]);
+      authStore.token = response.data["access_token"];
+      console.log(authStore.token);
+      router.push({ path: "/tasks" });
     })
     .catch((error) => {
       console.log(error);
