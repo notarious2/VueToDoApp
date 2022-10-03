@@ -44,11 +44,15 @@
 
 <script setup>
 import { ref } from "vue";
+import axios from "axios";
 
 const username = ref("");
 const password = ref("");
 const showPassword = ref(false);
 const passwordType = ref("password");
+let success = ref(false);
+
+const params = new URLSearchParams();
 
 function toggleShow() {
   showPassword.value = !showPassword.value;
@@ -59,8 +63,24 @@ function toggleShow() {
   }
 }
 function submitAuthDetails() {
-  console.log(username.value);
-  console.log(password.value);
+  params.append("username", username.value);
+  params.append("password", password.value);
+
+  const headers = {
+    Accept: "application/json",
+    "Content-Type": "application/x-www-form-urlencoded",
+  };
+  axios
+    .post("http://localhost:8000/login", params, {
+      headers: headers,
+    })
+    .then((response) => {
+      success.value = true;
+      console.log(response.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 }
 </script>
 
