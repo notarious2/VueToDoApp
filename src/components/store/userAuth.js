@@ -7,13 +7,11 @@ export const useAuthStore = defineStore("authentication", {
     token: "",
     // initialize state from local storage to enable user to stay logged in
     user: JSON.parse(localStorage.getItem("user")),
+    errorLogIn: false,
   }),
   actions: {
     login(username, password) {
       const params = new URLSearchParams();
-      console.log(username);
-      console.log(username.value);
-      console.log(password.value);
       params.append("username", username);
       params.append("password", password);
 
@@ -35,13 +33,18 @@ export const useAuthStore = defineStore("authentication", {
           router.push({ path: "/tasks" });
         })
         .catch((error) => {
-          console.log(error);
+          console.log(error.response);
+          this.errorLogIn = true;
         });
     },
     logout() {
       this.user = null;
       localStorage.removeItem("user");
       router.push("/auth");
+    },
+
+    clearError() {
+      this.errorLogIn = false;
     },
   },
 });

@@ -17,12 +17,18 @@ import { ref, onMounted } from "vue";
 const tasks = ref([]);
 
 async function loadTasks() {
-  const response = await axios.get("http://localhost:8000/task", {
-    headers: authHeader(),
-  });
-  const result = response.data;
-  for (const key of Object.keys(result)) {
-    tasks.value.push(result[key].text);
+  try {
+    const response = await axios.get("http://localhost:8000/task", {
+      headers: authHeader(),
+    });
+    // working with response
+    const result = response.data;
+    for (const key of Object.keys(result)) {
+      tasks.value.push(result[key].text);
+    }
+  } catch (err) {
+    console.log("Here");
+    console.log(err);
   }
 }
 

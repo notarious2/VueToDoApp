@@ -13,6 +13,7 @@
               name="uname"
               required
               v-model="username"
+              @blur="authStore.clearError()"
             />
           </div>
           <div class="icon-div">
@@ -26,6 +27,7 @@
               name="psw"
               required
               v-model="password"
+              @blur="authStore.clearError()"
             />
             <a id="icon" @click="toggleShow">
               <font-awesome-icon
@@ -37,6 +39,9 @@
           </div>
           <button class="button-74" type="submit">Login</button>
         </div>
+        <span id="error-message" v-if="authStore.errorLogIn">
+          Incorrect Email or Password
+        </span>
       </form>
     </div>
   </div>
@@ -48,6 +53,8 @@ import { useAuthStore } from "../components/store/userAuth.js";
 // import axios from "axios";
 // import { useRouter } from "vue-router";
 // const router = useRouter();
+
+const authStore = useAuthStore();
 
 const username = ref("");
 const password = ref("");
@@ -63,8 +70,7 @@ function toggleShow() {
   }
 }
 function submitAuthDetails() {
-  const authStore = useAuthStore();
-  return authStore.login(username.value, password.value);
+  authStore.login(username.value, password.value);
 }
 </script>
 
@@ -76,6 +82,11 @@ function submitAuthDetails() {
 .container {
   width: 200px;
   margin: 50px auto;
+}
+#error-message {
+  color: red;
+  font-weight: bold;
+  margin-top: 0px;
 }
 
 #icon {
@@ -154,6 +165,7 @@ function submitAuthDetails() {
   -webkit-user-select: none;
   touch-action: manipulation;
   margin-top: 10px;
+  margin-bottom: 0px;
 }
 
 .button-74:hover {
