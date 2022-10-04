@@ -6,7 +6,6 @@ import TheRegistration from "./pages/TheRegistration.vue";
 import TheTasks from "./pages/TheTasks.vue";
 
 import { createPinia } from "pinia";
-
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
@@ -18,9 +17,7 @@ library.add(fab, fas, far);
 const app = createApp(App);
 
 const pinia = createPinia();
-// pinia.use(({ store }) => {
-//   store.router = markRaw(router);
-// });
+
 const routes = [
   {
     path: "/auth",
@@ -39,10 +36,15 @@ const routes = [
   },
 ];
 
-const router = createRouter({
+export const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+
+// Router has to be used as a plugin in pinia
+// pinia.use(({ store }) => {
+//   store.router = markRaw(router);
+// });
 
 app.component("font-awesome-icon", FontAwesomeIcon);
 

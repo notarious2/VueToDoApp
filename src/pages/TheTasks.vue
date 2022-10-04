@@ -1,20 +1,35 @@
 <template>
-  <div class="post-it">
-    <h1>{{ authStore.token }}</h1>
+  <div class="post-it" v-for="task in tasks" :key="task">
+    <h1>{{ task }}</h1>
   </div>
-  <div class="post-it">
+  <!-- <div class="post-it">
     <p>{{ authStore.token }}</p>
-  </div>
-  <div class="post-it">
-    <h1>Hello tasks Hello tasks Hello tasks Hello tasks</h1>
-  </div>
-  <div class="post-it">
-    <h1>Hello tasks</h1>
-  </div>
+  </div> -->
+  <button @click="authStore.logout()">Logout</button>
 </template>
 
 <script setup>
-import { useAuthStore } from "@/stores/userAuth";
+import { useAuthStore } from "../components/store/userAuth.js";
+import authHeader from "@/components/services/auth-header";
+import axios from "axios";
+import { ref, onMounted } from "vue";
+
+const tasks = ref([]);
+
+async function loadTasks() {
+  const response = await axios.get("http://localhost:8000/task", {
+    headers: authHeader(),
+  });
+  const result = response.data;
+  for (const key of Object.keys(result)) {
+    tasks.value.push(result[key].text);
+  }
+}
+
+onMounted(() => {
+  loadTasks();
+});
+
 const authStore = useAuthStore();
 console.log(typeof authStore.token);
 </script>

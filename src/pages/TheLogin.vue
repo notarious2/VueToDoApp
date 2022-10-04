@@ -44,17 +44,15 @@
 
 <script setup>
 import { ref } from "vue";
-import { useAuthStore } from "@/stores/userAuth";
-import axios from "axios";
-import { useRouter } from "vue-router";
-const router = useRouter();
+import { useAuthStore } from "../components/store/userAuth.js";
+// import axios from "axios";
+// import { useRouter } from "vue-router";
+// const router = useRouter();
 
-const authStore = useAuthStore();
 const username = ref("");
 const password = ref("");
 const showPassword = ref(false);
 const passwordType = ref("password");
-let success = ref(false);
 
 function toggleShow() {
   showPassword.value = !showPassword.value;
@@ -65,28 +63,8 @@ function toggleShow() {
   }
 }
 function submitAuthDetails() {
-  const params = new URLSearchParams();
-  params.append("username", username.value);
-  params.append("password", password.value);
-
-  const headers = {
-    Accept: "application/json",
-    "Content-Type": "application/x-www-form-urlencoded",
-  };
-  axios
-    .post("http://localhost:8000/login", params, {
-      headers: headers,
-    })
-    .then((response) => {
-      success.value = true;
-      // console.log(response.data["access_token"]);
-      authStore.token = response.data["access_token"];
-      console.log(authStore.token);
-      router.push({ path: "/tasks" });
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  const authStore = useAuthStore();
+  return authStore.login(username.value, password.value);
 }
 </script>
 
