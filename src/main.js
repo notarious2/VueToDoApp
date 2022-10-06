@@ -4,6 +4,7 @@ import App from "./App.vue";
 import TheLogin from "./pages/TheLogin.vue";
 import TheRegistration from "./pages/TheRegistration.vue";
 import TheTasks from "./pages/TheTasks.vue";
+import TasksTemplate from "./pages/TasksTemplate.vue";
 
 import { createPinia } from "pinia";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -33,6 +34,11 @@ const routes = [
     path: "/tasks",
     name: "Tasks",
     component: TheTasks,
+  },
+  {
+    path: "/template",
+    name: "template",
+    component: TasksTemplate,
   },
 ];
 
