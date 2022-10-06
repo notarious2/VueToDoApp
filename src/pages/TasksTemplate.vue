@@ -1,5 +1,9 @@
 <template>
   <div class="container">
+    <div id="calendario">
+      <h1>My Calendar</h1>
+      <FullCalendar :options="calendarOptions" />
+    </div>
     <h1>{{ date }}</h1>
     <draggable :list="myArray" item-key="id" @change="updateList">
       <template #item="{ element }">
@@ -61,21 +65,27 @@
         </div>
       </template>
     </draggable>
+
     <form @submit.prevent="addTask">
       <label>text </label>
       <input v-model="task" type="text" />
       <button>add task</button>
     </form>
   </div>
+  <div>HELLO WORLD</div>
 </template>
 
 <script setup>
 import { reactive, ref } from "vue";
 import draggable from "vuedraggable";
 
+import FullCalendar from "@fullcalendar/vue3";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import interactionPlugin from "@fullcalendar/interaction";
+
 const task = ref();
 
-const date = "1/1/2022";
+const date = ref("1/1/2022");
 
 const editedText = ref("");
 
@@ -85,6 +95,26 @@ const myArray = reactive([
   { text: "CCC", id: 3, completed: false, editable: false },
   { text: "DDD", id: 4, completed: true, editable: false },
 ]);
+
+const calendarOptions = {
+  plugins: [dayGridPlugin, interactionPlugin],
+  initialView: "dayGridMonth",
+  dateClick: handleDateClick,
+  events: [
+    { title: "3 tasks", date: "2022-10-06" },
+    { title: "event 2", date: "2019-04-02" },
+  ],
+  eventColor: "transparent",
+  eventTextColor: "red",
+  selectable: true,
+};
+
+// WORKING WITH CALENDAR
+
+function handleDateClick(arg) {
+  alert("date click!" + arg.dateStr);
+  date.value = arg.dateStr;
+}
 
 // listen to input inside edited paragraph text
 function editText(event) {
@@ -114,7 +144,7 @@ function makeEditable(element) {
 
 function addTask() {
   myArray.push({
-    name: task.value,
+    text: task.value,
     id: myArray.length + 1,
     checked: false,
   });
