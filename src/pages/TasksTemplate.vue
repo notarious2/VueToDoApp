@@ -5,59 +5,30 @@
       <h1>{{ date }}</h1>
       <draggable :list="myArray" item-key="id" @change="updateList">
         <template #item="{ element }">
-          <div class="list-item">
-            <div class="checkbox">
+          <div class="flexbox">
+            <div class="flex-text">
               <p
                 :contenteditable="element.editable"
-                class="text"
                 @input="editText"
                 @blur="applyEditChanges(element)"
               >
                 {{ element.text }}
               </p>
+            </div>
+            <div class="flex-buttons">
+              <font-awesome-icon
+                icon="fas fa-pen"
+                class="edit-icon"
+                :class="{ editSelected: element.editable }"
+                @click="makeEditable(element)"
+              />
+              <a class="close" @click="deleteTask(element)">x</a>
               <input
                 type="checkbox"
                 class="check"
                 :id="element.id"
                 v-model="element.completed"
                 @click="checkUncheck(element)"
-              />
-              <label :for="element.id" class="label">
-                <!-- TO-DO TEXT -->
-                <svg viewBox="0 0 100 100" height="50" width="50">
-                  <rect
-                    x="30"
-                    y="20"
-                    width="50"
-                    height="50"
-                    stroke="black"
-                    fill="none"
-                  />
-                  <g transform="translate(0,-952.36216)" id="layer1">
-                    <path
-                      id="path4146"
-                      d="m 55,978 c -73,19 46,71 15,2 C 60,959 13,966 30,1007 c 12,30 61,13 46,-23"
-                      fill="none"
-                      stroke="black"
-                      stroke-width="4"
-                      class="path1"
-                    />
-                  </g>
-                </svg>
-                <!-- DELETE BUTTON IF TASK IS COMPLETED -->
-              </label>
-
-              <a
-                class="close"
-                @click="deleteTask(element)"
-                v-if="element.completed === true"
-              ></a>
-              <font-awesome-icon
-                icon="fas fa-pen"
-                class="edit-icon"
-                :class="{ editSelected: element.editable }"
-                v-else
-                @click="makeEditable(element)"
               />
             </div>
           </div>
@@ -187,18 +158,27 @@ h1 {
     "header header"
     "todo calendar"
     "footer footer";
-  grid-template-rows: 80px 1fr 80px;
+  grid-template-rows: 60px 1fr 60px;
   grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
 header {
   grid-area: header;
   background: skyblue;
+  /* making HEADER inside of the grid flexbox */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 footer {
   grid-area: footer;
   background: lightblue;
+  /* making FOOTER inside of the grid flexbox */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .grid-item-todo {
@@ -213,7 +193,7 @@ footer {
 @media (max-width: 768px) {
   .grid-container {
     grid-template-columns: 1fr;
-    grid-template-rows: 80px 1fr 1fr 80px;
+    grid-template-rows: 50px 1fr 1fr 50px;
   }
   header {
     grid-row: 1;
@@ -230,6 +210,25 @@ footer {
     grid-row: 4/5;
   }
 }
+/* TO-DO INNER LAYOUT WITH FLEXBOX */
+
+.flexbox {
+  display: flex;
+  justify-content: space-between;
+}
+.flex-text {
+  background: lightgray;
+  flex: 1;
+  border: 1px solid orange;
+}
+
+.flex-buttons {
+  background: lightyellow;
+  flex-basis: 70px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
 
 .edit-icon {
   margin-top: 10px;
@@ -241,80 +240,4 @@ footer {
 .editSelected {
   color: green;
 }
-
-.checkbox {
-  display: inline-flex;
-}
-
-.text {
-  padding-left: 0px;
-}
-
-/* .label {
-  display: flex;
-} */
-
-.list-item {
-  border: 1px solid black;
-  padding: 2px 2px;
-  margin: 2px 2px;
-  width: 80%;
-  position: relative;
-}
-/* 
-.list-item p {
-  position: fixed;
-  left: 22px;
-} */
-
-/* CHECKBOX RELATED STYLING */
-/* .checkbox:not(:last-child) {
-  border-bottom: 2px solid white;
-} */
-.check {
-  /* width: 50px;
-  height: 50px; */
-  position: absolute;
-  /* opacity: 0; */
-  margin-right: 10px;
-  top: 15px;
-  left: 350px;
-}
-
-.path1 {
-  stroke-dasharray: 400;
-  stroke-dashoffset: 400;
-  transition: 0.5s all;
-}
-
-.check:checked + label svg g path {
-  stroke-dashoffset: 0;
-}
-
-/* CLOSE BUTTON */
-.close {
-  position: relative;
-  opacity: 0.4;
-  top: 10px;
-  /* float: right; */
-}
-.close:hover {
-  opacity: 1;
-}
-.close:before,
-.close:after {
-  position: absolute;
-  left: 15px;
-  content: " ";
-  height: 22px;
-  width: 3px;
-  background-color: #333;
-}
-.close:before {
-  transform: rotate(45deg);
-}
-.close:after {
-  transform: rotate(-45deg);
-}
-/* CLOSE BUTTON */
 </style>
