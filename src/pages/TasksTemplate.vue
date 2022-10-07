@@ -1,78 +1,82 @@
 <template>
-  <div class="container">
-    <div id="calendario">
+  <div class="grid-container">
+    <header>HEADER GOES HERE</header>
+    <div class="grid-item-todo">
+      <h1>{{ date }}</h1>
+      <draggable :list="myArray" item-key="id" @change="updateList">
+        <template #item="{ element }">
+          <div class="list-item">
+            <div class="checkbox">
+              <p
+                :contenteditable="element.editable"
+                class="text"
+                @input="editText"
+                @blur="applyEditChanges(element)"
+              >
+                {{ element.text }}
+              </p>
+              <input
+                type="checkbox"
+                class="check"
+                :id="element.id"
+                v-model="element.completed"
+                @click="checkUncheck(element)"
+              />
+              <label :for="element.id" class="label">
+                <!-- TO-DO TEXT -->
+                <svg viewBox="0 0 100 100" height="50" width="50">
+                  <rect
+                    x="30"
+                    y="20"
+                    width="50"
+                    height="50"
+                    stroke="black"
+                    fill="none"
+                  />
+                  <g transform="translate(0,-952.36216)" id="layer1">
+                    <path
+                      id="path4146"
+                      d="m 55,978 c -73,19 46,71 15,2 C 60,959 13,966 30,1007 c 12,30 61,13 46,-23"
+                      fill="none"
+                      stroke="black"
+                      stroke-width="4"
+                      class="path1"
+                    />
+                  </g>
+                </svg>
+                <!-- DELETE BUTTON IF TASK IS COMPLETED -->
+              </label>
+
+              <a
+                class="close"
+                @click="deleteTask(element)"
+                v-if="element.completed === true"
+              ></a>
+              <font-awesome-icon
+                icon="fas fa-pen"
+                class="edit-icon"
+                :class="{ editSelected: element.editable }"
+                v-else
+                @click="makeEditable(element)"
+              />
+            </div>
+          </div>
+        </template>
+      </draggable>
+      <form @submit.prevent="addTask">
+        <label>text </label>
+        <input v-model="task" type="text" />
+        <button>add task</button>
+      </form>
+    </div>
+    <div class="grid-item-calendar">
       <h1>My Calendar</h1>
       <FullCalendar :options="calendarOptions" />
     </div>
-    <h1>{{ date }}</h1>
-    <draggable :list="myArray" item-key="id" @change="updateList">
-      <template #item="{ element }">
-        <div class="list-item">
-          <div class="checkbox">
-            <p
-              :contenteditable="element.editable"
-              class="text"
-              @input="editText"
-              @blur="applyEditChanges(element)"
-            >
-              {{ element.text }}
-            </p>
-            <input
-              type="checkbox"
-              class="check"
-              :id="element.id"
-              v-model="element.completed"
-              @click="checkUncheck(element)"
-            />
-            <label :for="element.id" class="label">
-              <!-- TO-DO TEXT -->
-              <svg viewBox="0 0 100 100" height="50" width="50">
-                <rect
-                  x="30"
-                  y="20"
-                  width="50"
-                  height="50"
-                  stroke="black"
-                  fill="none"
-                />
-                <g transform="translate(0,-952.36216)" id="layer1">
-                  <path
-                    id="path4146"
-                    d="m 55,978 c -73,19 46,71 15,2 C 60,959 13,966 30,1007 c 12,30 61,13 46,-23"
-                    fill="none"
-                    stroke="black"
-                    stroke-width="4"
-                    class="path1"
-                  />
-                </g>
-              </svg>
-              <!-- DELETE BUTTON IF TASK IS COMPLETED -->
-            </label>
-
-            <a
-              class="close"
-              @click="deleteTask(element)"
-              v-if="element.completed === true"
-            ></a>
-            <font-awesome-icon
-              icon="fas fa-pen"
-              class="edit-icon"
-              :class="{ editSelected: element.editable }"
-              v-else
-              @click="makeEditable(element)"
-            />
-          </div>
-        </div>
-      </template>
-    </draggable>
-
-    <form @submit.prevent="addTask">
-      <label>text </label>
-      <input v-model="task" type="text" />
-      <button>add task</button>
-    </form>
+    <footer>
+      <p>FOOTER GOES HERE</p>
+    </footer>
   </div>
-  <div>HELLO WORLD</div>
 </template>
 
 <script setup>
@@ -175,6 +179,37 @@ h1 {
   text-align: center;
 }
 
+/* GENERAL PAGE LAYOUT WITH GRIDS */
+.grid-container {
+  min-height: 100vh;
+  display: grid;
+  grid-template-areas:
+    "header header"
+    "todo calendar"
+    "footer footer";
+  grid-template-rows: 80px 1fr 80px;
+  grid-template-columns: minmax(auto, 700px) 1fr;
+}
+
+header {
+  grid-area: header;
+  background: skyblue;
+}
+
+footer {
+  grid-area: footer;
+  background: lightblue;
+}
+
+.grid-item-todo {
+  grid-area: todo;
+  background: lightgreen;
+}
+.grid-item-calendar {
+  grid-area: calendar;
+  background: lightsteelblue;
+}
+
 .edit-icon {
   margin-top: 10px;
   font-size: 18px;
@@ -197,11 +232,6 @@ h1 {
 /* .label {
   display: flex;
 } */
-
-.container {
-  background-color: beige;
-  width: 50%;
-}
 
 .list-item {
   background-color: blanchedalmond;
