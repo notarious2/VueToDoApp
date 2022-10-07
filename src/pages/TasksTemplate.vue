@@ -188,7 +188,7 @@ h1 {
     "todo calendar"
     "footer footer";
   grid-template-rows: 80px 1fr 80px;
-  grid-template-columns: minmax(auto, 700px) 1fr;
+  grid-template-columns: 1fr 1fr;
 }
 
 header {
@@ -208,6 +208,27 @@ footer {
 .grid-item-calendar {
   grid-area: calendar;
   background: lightsteelblue;
+}
+
+@media (max-width: 768px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: 80px 1fr 1fr 80px;
+  }
+  header {
+    grid-row: 1;
+  }
+  .grid-item-todo {
+    grid-row: 2;
+    grid-column: 1;
+  }
+  .grid-item-calendar {
+    grid-row: 3;
+    grid-column: 1;
+  }
+  footer {
+    grid-row: 4/5;
+  }
 }
 
 .edit-icon {
@@ -234,7 +255,7 @@ footer {
 } */
 
 .list-item {
-  background-color: blanchedalmond;
+  border: 1px solid black;
   padding: 2px 2px;
   margin: 2px 2px;
   width: 80%;
@@ -253,8 +274,11 @@ footer {
 .check {
   /* width: 50px;
   height: 50px; */
-  position: relative;
-  opacity: 0;
+  position: absolute;
+  /* opacity: 0; */
+  margin-right: 10px;
+  top: 15px;
+  left: 350px;
 }
 
 .path1 {
@@ -292,4 +316,5 @@ footer {
 .close:after {
   transform: rotate(-45deg);
 }
+/* CLOSE BUTTON */
 </style>
