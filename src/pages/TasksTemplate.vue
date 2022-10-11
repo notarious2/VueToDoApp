@@ -4,7 +4,14 @@
     <div class="grid-item-todo">
       <h1>{{ date }}</h1>
       <div v-if="!display" class="no-tasks">No Tasks to Display</div>
-      <draggable v-else :list="myArray" item-key="id" @change="updateList">
+      <div class="flex-headers">
+        <div class="header-number">#</div>
+        <div class="header-text">Description</div>
+        <div class="header-edit">Edit</div>
+        <div class="header-delete">Del.</div>
+        <div class="header-completed">Status</div>
+      </div>
+      <draggable :list="myArray" item-key="id" @change="updateList">
         <template #item="{ element }">
           <div class="flexbox">
             <div class="flex-id">
@@ -309,6 +316,36 @@ footer {
     margin-right: 40px;
   }
 }
+
+/* TO-DO HEADINGS WITH FLEXBOX */
+
+.flex-headers {
+  display: flex;
+  background-color: rgb(97, 213, 136);
+  margin: 0px 10px;
+  font-size: 14px;
+  padding: 5px 0px;
+}
+.header-number {
+  text-align: center;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  flex-basis: 20px;
+}
+.header-text {
+  flex-grow: 1;
+}
+
+.header-edit,
+.header-delete {
+  margin-right: 5px;
+}
+.header-completed {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
 /* TO-DO INNER LAYOUT WITH FLEXBOX */
 
 .flexbox {
