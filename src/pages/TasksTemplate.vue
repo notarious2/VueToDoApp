@@ -2,20 +2,24 @@
   <div class="grid-container">
     <header>HEADER GOES HERE</header>
     <div class="grid-item-todo">
-      <h1>{{ date }}</h1>
+      <h1>{{ tasksSlice.date }}</h1>
       <div v-if="!display" class="no-tasks">No Tasks to Display</div>
-      <div class="flex-headers">
+      <div v-else class="flex-headers">
         <div class="header-number">#</div>
         <div class="header-text">Description</div>
         <div class="header-edit">Edit</div>
         <div class="header-delete">Del.</div>
         <div class="header-completed">Status</div>
       </div>
-      <draggable :list="myArray" item-key="id" @change="updateList">
+      <draggable
+        :list="tasksSlice.tasks"
+        item-key="task_id"
+        @change="updateList"
+      >
         <template #item="{ element }">
           <div class="flexbox">
             <div class="flex-id">
-              <p>{{ element.id }}</p>
+              <p>{{ element.priority }}</p>
             </div>
             <div
               class="flex-text"
@@ -73,9 +77,12 @@
 </template>
 
 <script setup>
-import { reactive, ref, watch } from "vue";
+import { reactive, ref, watch, onMounted } from "vue";
 import draggable from "vuedraggable";
 import { formatDate } from "@fullcalendar/core";
+
+import authHeader from "@/components/services/auth-header";
+import axios from "axios";
 
 import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -89,25 +96,84 @@ const today = formatDate(new Date(), {
 
 const task = ref();
 
+const tasks = ref([]);
+
 const date = ref(today);
-console.log(date.value);
 
 const editedText = ref("");
+
+const tasksList = reactive([
+  {
+    date: date.value,
+    tasks: [
+      {
+        text: "BBB",
+        priority: 1,
+        completed: false,
+        editable: false,
+        task_id: "X12",
+      },
+      {
+        text: "CCC",
+        priority: 2,
+        completed: true,
+        editable: false,
+        task_id: "X123",
+      },
+      {
+        text: "CCC",
+        priority: 3,
+        completed: false,
+        editable: false,
+        task_id: "X1124",
+      },
+      {
+        text: "DDD",
+        priority: 4,
+        completed: true,
+        editable: false,
+        task_id: "X1sd",
+      },
+      {
+        text: "AAA",
+        priority: 6,
+        completed: true,
+        editable: false,
+        task_id: "X1sda",
+      },
+    ],
+  },
+  {
+    date: "1/1/2022",
+    tasks: [
+      { text: "XXX", id: 1, completed: true, editable: false },
+      { text: "YYY", id: 2, completed: false, editable: false },
+      { text: "ZZZ", id: 3, completed: true, editable: false },
+      { text: "WWW", id: 3, completed: true, editable: false },
+      { text: "RRR", id: 5, completed: true, editable: false },
+    ],
+  },
+]);
+// Getting array for specific date
+const tasksSlice = ref([]);
+
+tasksSlice.value = tasksList.filter((arr) => arr["date"] === date.value)[0];
+
+console.log("result", tasksSlice.value);
 
 const myArray = reactive([
   { text: "AAA", id: 1, completed: true, editable: false },
   { text: "BBB", id: 2, completed: false, editable: false },
   { text: "CCC", id: 3, completed: true, editable: false },
-  { text: "DDD", id: 4, completed: true, editable: false },
+  { text: "CCC", id: 3, completed: true, editable: false },
+  { text: "DDD", id: 5, completed: true, editable: false },
 ]);
 
 // Ref for calendar in the DOM
 const calendar = ref();
 
 // Count the number of completed tasks
-
 const notCompletedTasks = ref(myArray.filter((ob) => !ob.completed).length);
-console.log(notCompletedTasks.value);
 
 // To display if there are tasks
 const display = myArray.length > 0 ? ref(true) : ref(false);
@@ -125,7 +191,26 @@ const calendarOptions = {
   height: "auto",
   selectable: true,
 };
-
+// Function to Load Tasks
+async function loadTasks() {
+  try {
+    const response = await axios.get("http://localhost:8000/task", {
+      headers: authHeader(),
+    });
+    // working with response
+    const result = response.data;
+    for (const key of Object.keys(result)) {
+      tasks.value.push(result[key]);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+onMounted(() => {
+  console.log("Mounted");
+  loadTasks();
+  console.log("tasks", tasks.value);
+});
 // onMounted(() => {
 //   let calendarApi = ref(calendar.value.getApi());
 //   calendarApi.value.refetchEvents();
@@ -164,19 +249,22 @@ function editText(event) {
 
 function applyEditChanges(element) {
   if (editedText.value) {
-    myArray.forEach((el, idx) => {
-      if (element.id === el.id) {
-        myArray[idx].text = editedText.value;
+    tasksSlice.value.tasks.forEach((el, idx) => {
+      if (element.task_id === el.task_id) {
+        tasksSlice.value.tasks[idx].text = editedText.value;
       }
     });
   }
 }
+console.log("tasks:", tasksSlice.value.tasks);
 
 // make SELECTED paragraph tag editable
 function makeEditable(element) {
-  myArray.forEach((el, idx) => {
-    if (element.id === el.id) {
-      myArray[idx].editable = !myArray[idx].editable;
+  tasksSlice.value.tasks.forEach((el, idx) => {
+    if (element.task_id == el.task_id) {
+      tasksSlice.value.tasks[idx].editable =
+        !tasksSlice.value.tasks[idx].editable;
+      console.log(idx, tasksSlice.value.tasks[idx]);
     }
   });
 }
@@ -191,20 +279,22 @@ function addTask() {
 }
 // update tasks index/id on change - on drag
 function updateList() {
-  myArray.forEach((element, index) => {
-    myArray[index].id = index + 1;
+  tasksSlice.value.tasks.forEach((element, index) => {
+    tasksSlice.value.tasks[index].priority = index + 1;
   });
 }
 
 // Checking or unchecking specific object in an array
 function checkUncheck(element) {
-  let index = myArray.indexOf(element);
-  myArray[index].completed = !myArray[index].completed;
+  let index = tasksSlice.value.tasks.indexOf(element);
+  tasksSlice.value.tasks[index].completed =
+    !tasksSlice.value.tasks[index].completed;
 }
+// Deleting specific task
 
 function deleteTask(element) {
-  let index = myArray.indexOf(element);
-  myArray.splice(index, 1);
+  let index = tasksSlice.value.tasks.indexOf(element);
+  tasksSlice.value.tasks.splice(index, 1);
   updateList();
 }
 </script>
@@ -400,6 +490,7 @@ footer {
 
 .editSelected {
   color: green;
+  margin-top: 5px;
 }
 
 .isChecked {
