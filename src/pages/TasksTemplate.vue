@@ -238,13 +238,11 @@ function countTasks() {
   }
 }
 
-console.log("EMPTY TASKS", tasksSlice.value);
 if (tasksSlice.value.length > 0) {
   notCompletedTasks.value = tasksSlice.value.tasks.filter(
     (ob) => !ob.completed
   ).length;
 }
-console.log("NOT COMPLETE TASKS", notCompletedTasks.value);
 
 async function loadTasks() {
   try {
@@ -261,20 +259,12 @@ async function loadTasks() {
   }
 }
 onMounted(() => {
-  console.log("Mounted");
-  console.log("date" in tasksSlice.value);
   countTasks();
-
   loadTasks(); //Load tasks from backend
-  console.log("tasks", tasks.value);
 });
 
 onUpdated(() => {
   console.log("updated!");
-});
-
-// WATCHING TO-DO LIST TO DISPLAY # UNCOMPLETED TASKS
-watch([tasksSlice, tasksSlice.value, tasksSlice.value.tasks], () => {
   countTasks();
 });
 
@@ -323,7 +313,6 @@ function applyEditChanges(element) {
     });
   }
 }
-console.log("tasks:", tasksSlice.value.tasks);
 
 // make SELECTED paragraph tag editable
 function makeEditable(element) {
@@ -331,7 +320,6 @@ function makeEditable(element) {
     if (element.task_id == el.task_id) {
       tasksSlice.value.tasks[idx].editable =
         !tasksSlice.value.tasks[idx].editable;
-      console.log(idx, tasksSlice.value.tasks[idx]);
     }
   });
 }
@@ -458,6 +446,8 @@ h1 {
   display: flex;
   align-items: center;
   font-weight: bold;
+  font-size: 20px;
+  margin-top: 40px;
 }
 
 /* GENERAL PAGE LAYOUT WITH GRIDS */
