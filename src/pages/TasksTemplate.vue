@@ -2,14 +2,16 @@
   <div class="grid-container">
     <header>HEADER GOES HERE</header>
     <div class="grid-item-todo">
-      <h1>{{ tasksSlice.date }}</h1>
       <div v-if="!display" class="no-tasks">No Tasks to Display</div>
-      <div v-else class="flex-headers">
-        <div class="header-number">#</div>
-        <div class="header-text">Description</div>
-        <div class="header-edit">Edit</div>
-        <div class="header-delete">Del.</div>
-        <div class="header-completed">Status</div>
+      <div v-else>
+        <h1>{{ formatDate(new Date(tasksSlice.date)) }}</h1>
+        <div class="flex-headers">
+          <div class="header-number">#</div>
+          <div class="header-text">Description</div>
+          <div class="header-edit">Edit</div>
+          <div class="header-delete">Del.</div>
+          <div class="header-completed">Status</div>
+        </div>
       </div>
       <draggable
         :list="tasksSlice.tasks"
@@ -59,16 +61,40 @@
         </template>
       </draggable>
       <form class="form-control" @submit.prevent="addTask">
-        <input class="task-input" v-model="task" type="text" />
+        <input
+          class="task-input"
+          @blur="clearInvalidInput"
+          @keyup="clearInvalidInput"
+          v-model="enteredText"
+          type="text"
+        />
         <button class="button-74">add task</button>
       </form>
+      <span v-if="invalidInput" class="invalid-input">Please Enter Text</span>
     </div>
     <div class="grid-item-calendar">
-      <FullCalendar
-        :options="calendarOptions"
-        ref="calendar"
-        class="calendar"
+      <h1>{{ date }}</h1>
+      <Datepicker
+        inline
+        :enableTimePicker="false"
+        :monthChangeOnScroll="false"
+        v-model="date"
+        autoApply
+        @update:modelValue="handleDate"
       />
+      <div class="task-status">
+        <p>
+          # Tasks: <span id="total-tasks">{{ totalTasks }}</span>
+        </p>
+        <p>
+          # Completed tasks:
+          <span id="complete-tasks">{{ completedTasks }}</span>
+        </p>
+        <p>
+          # Not completed tasks:
+          <span id="uncomplete-tasks">{{ notCompletedTasks }}</span>
+        </p>
+      </div>
     </div>
     <footer>
       <p>FOOTER GOES HERE</p>
@@ -77,34 +103,31 @@
 </template>
 
 <script setup>
-import { reactive, ref, watch, onMounted } from "vue";
+// eslint-disable-next-line
+import { reactive, ref, watch, onMounted, onUpdated } from "vue";
 import draggable from "vuedraggable";
-import { formatDate } from "@fullcalendar/core";
 
 import authHeader from "@/components/services/auth-header";
 import axios from "axios";
 
-import FullCalendar from "@fullcalendar/vue3";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import interactionPlugin from "@fullcalendar/interaction";
+import Datepicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
 
-const today = formatDate(new Date(), {
-  month: "long",
-  year: "numeric",
-  day: "numeric",
-});
+const date = ref(new Date().toISOString().slice(0, 10));
 
-const task = ref();
+const invalidInput = ref(false);
+
+const enteredText = ref("");
 
 const tasks = ref([]);
 
-const date = ref(today);
+// const dateCal = ref(new Date());
 
 const editedText = ref("");
 
 const tasksList = reactive([
   {
-    date: date.value,
+    date: "2022-10-12",
     tasks: [
       {
         text: "BBB",
@@ -137,61 +160,92 @@ const tasksList = reactive([
       {
         text: "AAA",
         priority: 6,
-        completed: true,
+        completed: false,
         editable: false,
         task_id: "X1sda",
       },
     ],
   },
   {
-    date: "1/1/2022",
+    date: "2022-10-13",
     tasks: [
-      { text: "XXX", id: 1, completed: true, editable: false },
-      { text: "YYY", id: 2, completed: false, editable: false },
-      { text: "ZZZ", id: 3, completed: true, editable: false },
-      { text: "WWW", id: 3, completed: true, editable: false },
-      { text: "RRR", id: 5, completed: true, editable: false },
+      {
+        text: "Uno",
+        priority: 1,
+        completed: false,
+        editable: false,
+        task_id: "X12",
+      },
+      {
+        text: "Dos",
+        priority: 2,
+        completed: true,
+        editable: false,
+        task_id: "X123",
+      },
+      {
+        text: "Tres",
+        priority: 3,
+        completed: false,
+        editable: false,
+        task_id: "X1124",
+      },
+      {
+        text: "Quatro",
+        priority: 4,
+        completed: true,
+        editable: false,
+        task_id: "X1sd",
+      },
+      {
+        text: "Cinco",
+        priority: 6,
+        completed: true,
+        editable: false,
+        task_id: "X1sda",
+      },
     ],
   },
 ]);
 // Getting array for specific date
 const tasksSlice = ref([]);
+const display = ref(false);
 
-tasksSlice.value = tasksList.filter((arr) => arr["date"] === date.value)[0];
+if (tasksList.filter((arr) => arr["date"] === "2022-10-12").length === 0) {
+  // eslint-disable-next-line
+  display.value = false;
+} else {
+  tasksSlice.value = tasksList.filter((arr) => arr["date"] === "2022-10-12")[0];
+  display.value = true;
+}
 
-console.log("result", tasksSlice.value);
+// Count the number of tasks
+const notCompletedTasks = ref(null);
+const completedTasks = ref(null);
+const totalTasks = ref(null);
 
-const myArray = reactive([
-  { text: "AAA", id: 1, completed: true, editable: false },
-  { text: "BBB", id: 2, completed: false, editable: false },
-  { text: "CCC", id: 3, completed: true, editable: false },
-  { text: "CCC", id: 3, completed: true, editable: false },
-  { text: "DDD", id: 5, completed: true, editable: false },
-]);
+function countTasks() {
+  if ("date" in tasksSlice.value) {
+    totalTasks.value = tasksSlice.value.tasks.length;
+    notCompletedTasks.value = tasksSlice.value.tasks.filter(
+      (ob) => !ob.completed
+    ).length;
+    completedTasks.value = totalTasks.value - notCompletedTasks.value;
+  } else {
+    totalTasks.value = null;
+    completedTasks.value = null;
+    notCompletedTasks.value = null;
+  }
+}
 
-// Ref for calendar in the DOM
-const calendar = ref();
+console.log("EMPTY TASKS", tasksSlice.value);
+if (tasksSlice.value.length > 0) {
+  notCompletedTasks.value = tasksSlice.value.tasks.filter(
+    (ob) => !ob.completed
+  ).length;
+}
+console.log("NOT COMPLETE TASKS", notCompletedTasks.value);
 
-// Count the number of completed tasks
-const notCompletedTasks = ref(myArray.filter((ob) => !ob.completed).length);
-
-// To display if there are tasks
-const display = myArray.length > 0 ? ref(true) : ref(false);
-
-const calendarOptions = {
-  plugins: [dayGridPlugin, interactionPlugin],
-  initialView: "dayGridMonth",
-  dateClick: handleDateClick,
-  // events: [
-  //   { title: "not done: " + notCompletedTasks.value, date: "2022-10-06" },
-  //   { title: "not done: 3", date: "2022-10-07" },
-  // ],
-  // eventColor: "transparent",
-  // eventTextColor: "red",
-  height: "auto",
-  selectable: true,
-};
-// Function to Load Tasks
 async function loadTasks() {
   try {
     const response = await axios.get("http://localhost:8000/task", {
@@ -208,37 +262,50 @@ async function loadTasks() {
 }
 onMounted(() => {
   console.log("Mounted");
-  loadTasks();
+  console.log("date" in tasksSlice.value);
+  countTasks();
+
+  loadTasks(); //Load tasks from backend
   console.log("tasks", tasks.value);
 });
-// onMounted(() => {
-//   let calendarApi = ref(calendar.value.getApi());
-//   calendarApi.value.refetchEvents();
-// });
 
-// WATCHING TO-DO LIST TO DISPLAY/NOT DISPLAY
-watch(myArray, function () {
-  if (myArray.length > 0) {
-    display.value = true;
-  } else {
-    display.value = false;
-  }
+onUpdated(() => {
+  console.log("updated!");
 });
 
 // WATCHING TO-DO LIST TO DISPLAY # UNCOMPLETED TASKS
-watch(myArray, function () {
-  notCompletedTasks.value = myArray.filter((ob) => ob.completed).length;
+watch([tasksSlice, tasksSlice.value, tasksSlice.value.tasks], () => {
+  countTasks();
 });
-// WORKING WITH CALENDAR
 
-function handleDateClick(arg) {
-  // alert("date click!" + arg.dateStr);
-  date.value = formatDate(arg.date, {
+// custom function to return date in DD month-long YYYY format
+function formatDate(dateInput) {
+  return dateInput.toLocaleDateString("en-US", {
     month: "long",
     year: "numeric",
     day: "numeric",
   });
 }
+
+// clear invalid input - to be used at blur
+function clearInvalidInput() {
+  invalidInput.value = false;
+}
+
+// WORKING WITH CALENDAR
+
+const handleDate = (modelData) => {
+  date.value = modelData.toISOString().slice(0, 10);
+  // getting new slice based on picked date
+  tasksSlice.value = tasksList.filter((arr) => arr["date"] === date.value)[0];
+  display.value = true;
+
+  // creating empty array if there no tasks on picked date
+  if (!tasksSlice.value) {
+    tasksSlice.value = ref([]);
+    display.value = false;
+  }
+};
 
 // listen to input inside edited paragraph text
 function editText(event) {
@@ -270,12 +337,24 @@ function makeEditable(element) {
 }
 
 function addTask() {
-  myArray.push({
-    text: task.value,
-    id: myArray.length + 1,
-    checked: false,
-  });
-  task.value = "";
+  if (enteredText.value !== "") {
+    // add date if empty object
+    if (!("date" in tasksSlice.value)) {
+      tasksSlice.value = { date: date.value, tasks: [] };
+    }
+    tasksSlice.value.tasks.push({
+      text: enteredText.value,
+      priority: tasksSlice.value.tasks.length + 1,
+      checked: false,
+      completed: false,
+      task_id: (Math.random() + 1).toString(36).substring(7),
+    });
+    enteredText.value = "";
+    display.value = true;
+    tasksList.push(tasksSlice.value);
+  } else {
+    invalidInput.value = true;
+  }
 }
 // update tasks index/id on change - on drag
 function updateList() {
@@ -289,20 +368,68 @@ function checkUncheck(element) {
   let index = tasksSlice.value.tasks.indexOf(element);
   tasksSlice.value.tasks[index].completed =
     !tasksSlice.value.tasks[index].completed;
+  countTasks();
 }
 // Deleting specific task
 
 function deleteTask(element) {
   let index = tasksSlice.value.tasks.indexOf(element);
   tasksSlice.value.tasks.splice(index, 1);
+  if (tasksSlice.value.tasks.length === 0) {
+    display.value = false;
+  }
   updateList();
+  countTasks();
 }
 </script>
 
+<style>
+/* STYLING CALENDAR */
+#app
+  > div
+  > div.grid-item-calendar
+  > div
+  > div.dp__menu.dp__relative.dp__theme_light {
+  background-color: transparent;
+  flex-grow: 1;
+  margin: 10px 10px;
+}
+#app
+  > div
+  > div.grid-item-calendar
+  > div
+  > div.dp__menu.dp__relative.dp__theme_light
+  > div
+  > div
+  > div:nth-child(1)
+  > div
+  > div.dp__calendar
+  > div
+  > div
+  > div.dp__calendar_header {
+  width: 100%;
+}
+#app
+  > div
+  > div.grid-item-calendar
+  > div
+  > div.dp__menu.dp__relative.dp__theme_light
+  > div
+  > div
+  > div:nth-child(1)
+  > div
+  > div.dp__calendar
+  > div
+  > div
+  > div.dp__calendar {
+  width: 100%;
+}
+</style>
 <style scoped>
 * {
   font-family: "Kalam", cursive;
 }
+
 h1 {
   text-align: center;
 }
@@ -312,6 +439,7 @@ h1 {
   display: flex;
   height: 40px;
   justify-content: space-between;
+  margin-bottom: 10px;
 }
 
 .task-input {
@@ -398,6 +526,7 @@ footer {
   .form-control {
     flex-direction: column;
     align-items: center;
+    margin-bottom: 60px;
   }
   .button-74 {
     width: 90px;
@@ -528,10 +657,25 @@ footer {
   transform: translate(2px, 2px);
 }
 
-/* @media (min-width: 768px) {
-  .button-74 {
-    min-width: 120px;
-    padding: 0 25px;
-  }
-} */
+.invalid-input {
+  color: #b04b4b;
+  margin-right: 50px;
+  font-weight: bold;
+}
+.task-status p {
+  display: inline-block;
+  margin-right: 20px;
+}
+#total-tasks {
+  color: black;
+  font-weight: bold;
+}
+#complete-tasks {
+  color: #479d16;
+  font-weight: bold;
+}
+#uncomplete-tasks {
+  color: #841460;
+  font-weight: bold;
+}
 </style>
