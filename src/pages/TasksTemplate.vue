@@ -239,9 +239,11 @@ async function loadTasks() {
   }
 }
 function loadOneTask(task_date) {
+  console.log("VALUE", task_date, tasksSlice.value, tasksList.value);
   if (tasksList.value.filter((arr) => arr["date"] === task_date).length === 0) {
     // eslint-disable-next-line
     display.value = false;
+    tasksSlice.value = [];
   } else {
     console.log(tasksList.value.filter((arr) => arr["date"] === task_date)[0]);
     tasksSlice.value = tasksList.value.filter(
@@ -396,15 +398,31 @@ function checkUncheck(element) {
 }
 // Deleting specific task
 
-function deleteTask(element) {
-  let index = tasksSlice.value.tasks.indexOf(element);
-  tasksSlice.value.tasks.splice(index, 1);
-  if (tasksSlice.value.tasks.length === 0) {
-    display.value = false;
+async function deleteTask(element) {
+  console.log(element.task_id);
+  try {
+    await axios.get("http://localhost:8000/task/delete/" + element.task_id, {
+      headers: authHeader(),
+    });
+    // rerender ALL to-do tasks
+    tasksList.value = await loadTasks();
+    // get selected date's slice
+    loadOneTask(date.value);
+    console.log("ALL", tasksList.value, "SLICE", loadOneTask(date.value));
+  } catch (err) {
+    console.log(err);
   }
-  updateList();
-  countTasks();
 }
+
+// function deleteTask(element) {
+//   let index = tasksSlice.value.tasks.indexOf(element);
+//   tasksSlice.value.tasks.splice(index, 1);
+//   if (tasksSlice.value.tasks.length === 0) {
+//     display.value = false;
+//   }
+//   updateList();
+//   countTasks();
+// }
 </script>
 
 <style>
