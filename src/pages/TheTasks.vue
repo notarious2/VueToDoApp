@@ -34,6 +34,7 @@ async function loadTasks() {
 
 onMounted(() => {
   loadTasks();
+  console.log(tasks.value);
 });
 
 const authStore = useAuthStore();

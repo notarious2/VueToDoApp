@@ -60,7 +60,7 @@
           </div>
         </template>
       </draggable>
-      <form class="form-control" @submit.prevent="addTask">
+      <form class="form-control" @submit.prevent="addNewTask">
         <input
           class="task-input"
           @blur="clearInvalidInput"
@@ -82,7 +82,7 @@
         autoApply
         @update:modelValue="handleDate"
       />
-      <div class="task-status">
+      <div v-if="totalTasks" class="task-status">
         <p>
           # Tasks: <span id="total-tasks">{{ totalTasks }}</span>
         </p>
@@ -104,7 +104,7 @@
 
 <script setup>
 // eslint-disable-next-line
-import { reactive, ref, watch, onMounted, onUpdated } from "vue";
+import { reactive, ref, onMounted, onUpdated } from "vue";
 import draggable from "vuedraggable";
 
 import authHeader from "@/components/services/auth-header";
@@ -119,104 +119,136 @@ const invalidInput = ref(false);
 
 const enteredText = ref("");
 
-const tasks = ref([]);
-
 // const dateCal = ref(new Date());
 
 const editedText = ref("");
 
-const tasksList = reactive([
-  {
-    date: "2022-10-12",
-    tasks: [
-      {
-        text: "BBB",
-        priority: 1,
-        completed: false,
-        editable: false,
-        task_id: "X12",
-      },
-      {
-        text: "CCC",
-        priority: 2,
-        completed: true,
-        editable: false,
-        task_id: "X123",
-      },
-      {
-        text: "CCC",
-        priority: 3,
-        completed: false,
-        editable: false,
-        task_id: "X1124",
-      },
-      {
-        text: "DDD",
-        priority: 4,
-        completed: true,
-        editable: false,
-        task_id: "X1sd",
-      },
-      {
-        text: "AAA",
-        priority: 6,
-        completed: false,
-        editable: false,
-        task_id: "X1sda",
-      },
-    ],
-  },
-  {
-    date: "2022-10-13",
-    tasks: [
-      {
-        text: "Uno",
-        priority: 1,
-        completed: false,
-        editable: false,
-        task_id: "X12",
-      },
-      {
-        text: "Dos",
-        priority: 2,
-        completed: true,
-        editable: false,
-        task_id: "X123",
-      },
-      {
-        text: "Tres",
-        priority: 3,
-        completed: false,
-        editable: false,
-        task_id: "X1124",
-      },
-      {
-        text: "Quatro",
-        priority: 4,
-        completed: true,
-        editable: false,
-        task_id: "X1sd",
-      },
-      {
-        text: "Cinco",
-        priority: 6,
-        completed: true,
-        editable: false,
-        task_id: "X1sda",
-      },
-    ],
-  },
-]);
+// const tasksList = reactive([
+//   {
+//     date: "2022-10-12",
+//     tasks: [
+//       {
+//         text: "BBB",
+//         priority: 1,
+//         completed: false,
+//         editable: false,
+//         task_id: "X12",
+//       },
+//       {
+//         text: "CCC",
+//         priority: 2,
+//         completed: true,
+//         editable: false,
+//         task_id: "X123",
+//       },
+//       {
+//         text: "CCC",
+//         priority: 3,
+//         completed: false,
+//         editable: false,
+//         task_id: "X1124",
+//       },
+//       {
+//         text: "DDD",
+//         priority: 4,
+//         completed: true,
+//         editable: false,
+//         task_id: "X1sd",
+//       },
+//       {
+//         text: "AAA",
+//         priority: 6,
+//         completed: false,
+//         editable: false,
+//         task_id: "X1sda",
+//       },
+//     ],
+//   },
+//   {
+//     date: "2022-10-13",
+//     tasks: [
+//       {
+//         text: "Uno",
+//         priority: 1,
+//         completed: false,
+//         editable: false,
+//         task_id: "X12",
+//       },
+//       {
+//         text: "Dos",
+//         priority: 2,
+//         completed: true,
+//         editable: false,
+//         task_id: "X123",
+//       },
+//       {
+//         text: "Tres",
+//         priority: 3,
+//         completed: false,
+//         editable: false,
+//         task_id: "X1124",
+//       },
+//       {
+//         text: "Quatro",
+//         priority: 4,
+//         completed: true,
+//         editable: false,
+//         task_id: "X1sd",
+//       },
+//       {
+//         text: "Cinco",
+//         priority: 6,
+//         completed: true,
+//         editable: false,
+//         task_id: "X1sda",
+//       },
+//     ],
+//   },
+// ]);
+
 // Getting array for specific date
+const tasksList = reactive([]);
 const tasksSlice = ref([]);
 const display = ref(false);
 
-if (tasksList.filter((arr) => arr["date"] === "2022-10-12").length === 0) {
-  // eslint-disable-next-line
-  display.value = false;
-} else {
-  tasksSlice.value = tasksList.filter((arr) => arr["date"] === "2022-10-12")[0];
-  display.value = true;
+async function loadTasks() {
+  try {
+    const response = await axios.get("http://localhost:8000/task", {
+      headers: authHeader(),
+    });
+    // working with response
+    console.log(response);
+    const result = response.data;
+
+    const newArray = reactive([]);
+    result.forEach((element) => {
+      if (!newArray.filter((arr) => arr["date"] === element.date).length > 0) {
+        newArray.push({
+          date: element.date,
+          tasks: [{ ...element, editable: false }],
+        });
+      } else {
+        const idx = newArray.findIndex((arr) => arr.date === element.date);
+        newArray[idx].tasks.push({ ...element, editable: false });
+      }
+    });
+    // tasksList.value = newArray;
+    return newArray;
+  } catch (err) {
+    console.log(err);
+  }
+}
+function loadOneTask(task_date) {
+  if (tasksList.value.filter((arr) => arr["date"] === task_date).length === 0) {
+    // eslint-disable-next-line
+    display.value = false;
+  } else {
+    console.log(tasksList.value.filter((arr) => arr["date"] === task_date)[0]);
+    tasksSlice.value = tasksList.value.filter(
+      (arr) => arr["date"] === task_date
+    )[0];
+    display.value = true;
+  }
 }
 
 // Count the number of tasks
@@ -244,27 +276,14 @@ if (tasksSlice.value.length > 0) {
   ).length;
 }
 
-async function loadTasks() {
-  try {
-    const response = await axios.get("http://localhost:8000/task", {
-      headers: authHeader(),
-    });
-    // working with response
-    const result = response.data;
-    for (const key of Object.keys(result)) {
-      tasks.value.push(result[key]);
-    }
-  } catch (err) {
-    console.log(err);
-  }
-}
-onMounted(() => {
+onMounted(async () => {
+  tasksList.value = await loadTasks();
   countTasks();
-  loadTasks(); //Load tasks from backend
+  loadOneTask(date.value);
+  updateList();
 });
 
 onUpdated(() => {
-  console.log("updated!");
   countTasks();
 });
 
@@ -295,6 +314,8 @@ const handleDate = (modelData) => {
     tasksSlice.value = ref([]);
     display.value = false;
   }
+  console.log("TASKLIST", tasksList);
+  loadOneTask(date.value);
 };
 
 // listen to input inside edited paragraph text
@@ -324,26 +345,41 @@ function makeEditable(element) {
   });
 }
 
-function addTask() {
+// adding the task - Post Request
+
+async function addNewTask() {
+  // priority is 1 if there are not tasks on that day, else it is autoincremented
+  const priority =
+    "date" in tasksSlice.value ? tasksSlice.value.tasks.length + 1 : 1;
+
   if (enteredText.value !== "") {
-    // add date if empty object
-    if (!("date" in tasksSlice.value)) {
-      tasksSlice.value = { date: date.value, tasks: [] };
+    try {
+      await axios.post(
+        "http://localhost:8000/task",
+        {
+          priority: priority,
+          date: date.value,
+          text: enteredText.value,
+          completed: false,
+        },
+        {
+          headers: authHeader(),
+        }
+      );
+      // rerender ALL to-do tasks
+      tasksList.value = await loadTasks();
+      // get selected date's slice
+      loadOneTask(date.value);
+      //clear input field
+      enteredText.value = "";
+    } catch (err) {
+      console.log(err);
     }
-    tasksSlice.value.tasks.push({
-      text: enteredText.value,
-      priority: tasksSlice.value.tasks.length + 1,
-      checked: false,
-      completed: false,
-      task_id: (Math.random() + 1).toString(36).substring(7),
-    });
-    enteredText.value = "";
-    display.value = true;
-    tasksList.push(tasksSlice.value);
   } else {
     invalidInput.value = true;
   }
 }
+
 // update tasks index/id on change - on drag
 function updateList() {
   tasksSlice.value.tasks.forEach((element, index) => {
@@ -470,10 +506,6 @@ header {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.calendar {
-  margin-top: 10px;
 }
 
 footer {
