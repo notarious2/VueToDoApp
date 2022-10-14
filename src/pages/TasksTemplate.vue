@@ -236,7 +236,7 @@ async function loadTasks() {
       }
     });
     // tasksList.value = newArray;
-    // console.log("NEW ARRAY", newArray);
+    console.log("Load...");
     return newArray;
   } catch (err) {
     console.log(err);
@@ -253,6 +253,10 @@ function loadOneTask(task_date) {
       (arr) => arr["date"] === task_date
     )[0];
     display.value = true;
+    // SORT THE SLICE
+    tasksSlice.value.tasks.sort((a, b) =>
+      a.priority > b.priority ? 1 : b.priority > a.priority ? -1 : 0
+    );
   }
 }
 // SEE IF LOGGED IN
@@ -289,6 +293,7 @@ onMounted(async () => {
   tasksList.value = await loadTasks();
   countTasks();
   loadOneTask(date.value);
+
   // updateList();
 });
 
@@ -366,10 +371,10 @@ function makeEditable(element) {
 // adding the task - Post Request
 
 async function addNewTask() {
+  console.log("Add request");
   // priority is 1 if there are not tasks on that day, else it is autoincremented
   const priority =
     "date" in tasksSlice.value ? tasksSlice.value.tasks.length + 1 : 1;
-
   if (enteredText.value !== "") {
     try {
       await axios.post(
@@ -399,11 +404,38 @@ async function addNewTask() {
 }
 
 // update tasks index/id on change - on drag
-function updateList() {
-  tasksSlice.value.tasks.forEach((element, index) => {
-    tasksSlice.value.tasks[index].priority = index + 1;
-  });
+async function updateList() {
+  for (const idx in tasksSlice.value.tasks) {
+    // console.log(Number(idx) + 1, tasksSlice.value.tasks[idx].task_id);
+    const currentTaskId = tasksSlice.value.tasks[idx].task_id;
+    // check if the current priority is order, if not change with Patch Request and Re-rendering
+    if (tasksSlice.value.tasks[idx].priority !== Number(idx) + 1) {
+      try {
+        await axios.patch(
+          "http://localhost:8000/task/update/" + currentTaskId,
+          { priority: Number(idx) + 1 },
+          { headers: authHeader() }
+        );
+        console.log("Updated!");
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }
+
+  // rerender ALL to-do tasks
+  tasksList.value = await loadTasks();
+  // get selected date's slice
+  loadOneTask(date.value);
+  //clear input field
 }
+
+// function updateList() {
+//   tasksSlice.value.tasks.forEach((element, index) => {
+//     console.log("PRIORITIES", tasksSlice.value.tasks[index].priority);
+//     tasksSlice.value.tasks[index].priority = index + 1;
+//   });
+// }
 
 // Checking or unchecking specific object in an array
 async function checkUncheck(element) {
@@ -438,13 +470,16 @@ async function deleteTask(element) {
     await axios.get("http://localhost:8000/task/delete/" + element.task_id, {
       headers: authHeader(),
     });
+
     // rerender ALL to-do tasks
+    console.log("DELETING");
     tasksList.value = await loadTasks();
     // get selected date's slice
     loadOneTask(date.value);
   } catch (err) {
     console.log(err);
   }
+  updateList();
 }
 
 // function deleteTask(element) {
