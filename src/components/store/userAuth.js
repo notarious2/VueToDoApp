@@ -9,6 +9,9 @@ export const useAuthStore = defineStore("authentication", {
     user: JSON.parse(localStorage.getItem("user")),
     errorLogIn: false,
   }),
+  // getters: {
+  //   isAuthenticated: (state) => !state.token,
+  // },
   actions: {
     login(username, password) {
       const params = new URLSearchParams();

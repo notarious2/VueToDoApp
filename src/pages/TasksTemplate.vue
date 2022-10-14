@@ -95,6 +95,7 @@
           <span id="uncomplete-tasks">{{ notCompletedTasks }}</span>
         </p>
       </div>
+      <button @click="authStore.logout()">Logout</button>
     </div>
     <footer>
       <p>FOOTER GOES HERE</p>
@@ -104,8 +105,10 @@
 
 <script setup>
 // eslint-disable-next-line
-import { reactive, ref, onMounted, onUpdated } from "vue";
+import { reactive, ref, onMounted, onUpdated, computed } from "vue";
 import draggable from "vuedraggable";
+
+import { useAuthStore } from "../components/store/userAuth.js";
 
 import authHeader from "@/components/services/auth-header";
 import axios from "axios";
@@ -217,7 +220,7 @@ async function loadTasks() {
       headers: authHeader(),
     });
     // working with response
-    console.log(response);
+    // console.log(response);
     const result = response.data;
 
     const newArray = reactive([]);
@@ -233,25 +236,29 @@ async function loadTasks() {
       }
     });
     // tasksList.value = newArray;
+    // console.log("NEW ARRAY", newArray);
     return newArray;
   } catch (err) {
     console.log(err);
   }
 }
 function loadOneTask(task_date) {
-  console.log("VALUE", task_date, tasksSlice.value, tasksList.value);
   if (tasksList.value.filter((arr) => arr["date"] === task_date).length === 0) {
     // eslint-disable-next-line
     display.value = false;
     tasksSlice.value = [];
   } else {
-    console.log(tasksList.value.filter((arr) => arr["date"] === task_date)[0]);
+    // console.log(tasksList.value.filter((arr) => arr["date"] === task_date)[0]);
     tasksSlice.value = tasksList.value.filter(
       (arr) => arr["date"] === task_date
     )[0];
     display.value = true;
   }
 }
+// SEE IF LOGGED IN
+const authStore = useAuthStore();
+// const loggedIn = computed(() => authStore.isAuthenticated);
+// console.log("LOGGED?", loggedIn.value);
 
 // Count the number of tasks
 const notCompletedTasks = ref(null);
@@ -282,7 +289,7 @@ onMounted(async () => {
   tasksList.value = await loadTasks();
   countTasks();
   loadOneTask(date.value);
-  updateList();
+  // updateList();
 });
 
 onUpdated(() => {
@@ -326,18 +333,27 @@ function editText(event) {
 }
 
 // Apply above changes at blur
-
-function applyEditChanges(element) {
-  if (editedText.value) {
-    tasksSlice.value.tasks.forEach((el, idx) => {
-      if (element.task_id === el.task_id) {
-        tasksSlice.value.tasks[idx].text = editedText.value;
-      }
-    });
+async function applyEditChanges(element) {
+  // No need to send HTTP request if Text is unchanged
+  if (editedText.value && editedText.value !== element.text) {
+    try {
+      await axios.patch(
+        "http://localhost:8000/task/update/" + element.task_id,
+        { text: editedText.value },
+        { headers: authHeader() }
+      );
+      // rerender ALL to-do tasks
+      tasksList.value = await loadTasks();
+      // get selected date's slice
+      loadOneTask(date.value);
+    } catch (err) {
+      console.log(err);
+    }
   }
 }
 
 // make SELECTED paragraph tag editable
+// No link with backend here - elements become uneditable after refresh
 function makeEditable(element) {
   tasksSlice.value.tasks.forEach((el, idx) => {
     if (element.task_id == el.task_id) {
@@ -390,16 +406,34 @@ function updateList() {
 }
 
 // Checking or unchecking specific object in an array
-function checkUncheck(element) {
-  let index = tasksSlice.value.tasks.indexOf(element);
-  tasksSlice.value.tasks[index].completed =
-    !tasksSlice.value.tasks[index].completed;
+async function checkUncheck(element) {
+  try {
+    await axios.patch(
+      "http://localhost:8000/task/update/" + element.task_id,
+      { completed: element.completed ? false : true },
+      { headers: authHeader() }
+    );
+    // rerender ALL to-do tasks
+    tasksList.value = await loadTasks();
+    // get selected date's slice
+    loadOneTask(date.value);
+    //clear input field
+  } catch (err) {
+    console.log(err);
+  }
   countTasks();
 }
+
+// function checkUncheck(element) {
+//   let index = tasksSlice.value.tasks.indexOf(element);
+//   tasksSlice.value.tasks[index].completed =
+//     !tasksSlice.value.tasks[index].completed;
+//   countTasks();
+// }
+
 // Deleting specific task
 
 async function deleteTask(element) {
-  console.log(element.task_id);
   try {
     await axios.get("http://localhost:8000/task/delete/" + element.task_id, {
       headers: authHeader(),
@@ -408,7 +442,6 @@ async function deleteTask(element) {
     tasksList.value = await loadTasks();
     // get selected date's slice
     loadOneTask(date.value);
-    console.log("ALL", tasksList.value, "SLICE", loadOneTask(date.value));
   } catch (err) {
     console.log(err);
   }
