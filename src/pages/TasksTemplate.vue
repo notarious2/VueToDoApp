@@ -16,7 +16,7 @@
       <draggable
         :list="tasksSlice.tasks"
         item-key="task_id"
-        @change="updateList"
+        @change="updatePriority"
       >
         <template #item="{ element }">
           <div class="flexbox">
@@ -107,6 +107,7 @@
 // eslint-disable-next-line
 import { reactive, ref, onMounted, onUpdated, computed } from "vue";
 import draggable from "vuedraggable";
+import { onLCP, onFID, onCLS } from "web-vitals";
 
 import { useAuthStore } from "../components/store/userAuth.js";
 
@@ -299,6 +300,9 @@ onMounted(async () => {
 
 onUpdated(() => {
   countTasks();
+  onCLS(console.log);
+  onFID(console.log);
+  onLCP(console.log);
 });
 
 // custom function to return date in DD month-long YYYY format
@@ -347,6 +351,7 @@ async function applyEditChanges(element) {
         { text: editedText.value },
         { headers: authHeader() }
       );
+      console.log("Edited!");
       // rerender ALL to-do tasks
       tasksList.value = await loadTasks();
       // get selected date's slice
@@ -403,39 +408,38 @@ async function addNewTask() {
   }
 }
 
-// update tasks index/id on change - on drag
-async function updateList() {
+// update tasks index/id on change - on drag / also used for deletion
+async function updatePriority() {
+  // GET changed priorities FIRST
+  const prioritiesList = {};
   for (const idx in tasksSlice.value.tasks) {
-    // console.log(Number(idx) + 1, tasksSlice.value.tasks[idx].task_id);
-    const currentTaskId = tasksSlice.value.tasks[idx].task_id;
-    // check if the current priority is order, if not change with Patch Request and Re-rendering
     if (tasksSlice.value.tasks[idx].priority !== Number(idx) + 1) {
-      try {
-        await axios.patch(
-          "http://localhost:8000/task/update/" + currentTaskId,
-          { priority: Number(idx) + 1 },
-          { headers: authHeader() }
-        );
-        console.log("Updated!");
-      } catch (err) {
-        console.log(err);
-      }
+      prioritiesList[tasksSlice.value.tasks[idx].task_id] = Number(idx) + 1;
     }
   }
+  if (Object.keys(prioritiesList).length > 0) {
+    const payload = {};
+    payload[date.value] = prioritiesList;
+    // Update MULTIPLE field with ONE PATCH Request
+    try {
+      await axios.patch(
+        "http://localhost:8000/task/update_order",
+        {
+          ...payload,
+        },
+        {
+          headers: authHeader(),
+        }
+      );
+      console.log("Multiple Rows Update!");
+    } catch (err) {
+      console.log(err);
+    }
 
-  // rerender ALL to-do tasks
-  tasksList.value = await loadTasks();
-  // get selected date's slice
-  loadOneTask(date.value);
-  //clear input field
+    tasksList.value = await loadTasks();
+    loadOneTask(date.value);
+  }
 }
-
-// function updateList() {
-//   tasksSlice.value.tasks.forEach((element, index) => {
-//     console.log("PRIORITIES", tasksSlice.value.tasks[index].priority);
-//     tasksSlice.value.tasks[index].priority = index + 1;
-//   });
-// }
 
 // Checking or unchecking specific object in an array
 async function checkUncheck(element) {
@@ -445,6 +449,7 @@ async function checkUncheck(element) {
       { completed: element.completed ? false : true },
       { headers: authHeader() }
     );
+    console.log("Completed!");
     // rerender ALL to-do tasks
     tasksList.value = await loadTasks();
     // get selected date's slice
@@ -479,7 +484,7 @@ async function deleteTask(element) {
   } catch (err) {
     console.log(err);
   }
-  updateList();
+  updatePriority();
 }
 
 // function deleteTask(element) {
