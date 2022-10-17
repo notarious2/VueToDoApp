@@ -4,8 +4,8 @@ import App from "./App.vue";
 import TheLogin from "./pages/TheLogin.vue";
 import TheRegistration from "./pages/TheRegistration.vue";
 import TheTasks from "./pages/TheTasks.vue";
-import TasksTemplate from "./pages/TasksTemplate.vue";
-import TheDate from "./pages/TheDate.vue";
+
+// import { useAuthStore } from "../src/components/store/userAuth.js";
 
 import { createPinia } from "pinia";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -15,6 +15,15 @@ import { fab } from "@fortawesome/free-brands-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
 
 library.add(fab, fas, far);
+
+const ifAuthenticated = (to, from, next) => {
+  if (JSON.parse(localStorage.getItem("user"))) {
+    next();
+    return;
+  } else {
+    next("/auth");
+  }
+};
 
 const app = createApp(App);
 
@@ -31,20 +40,12 @@ const routes = [
     name: "Registration",
     component: TheRegistration,
   },
+
   {
     path: "/tasks",
     name: "Tasks",
     component: TheTasks,
-  },
-  {
-    path: "/template",
-    name: "template",
-    component: TasksTemplate,
-  },
-  {
-    path: "/date",
-    name: "thedate",
-    component: TheDate,
+    beforeEnter: ifAuthenticated,
   },
 ];
 
@@ -62,5 +63,6 @@ app.component("font-awesome-icon", FontAwesomeIcon);
 
 app.use(pinia);
 app.use(router);
+// const authStore = useAuthStore();
 
 app.mount("#app");
