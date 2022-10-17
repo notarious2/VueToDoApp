@@ -4,6 +4,10 @@ import App from "./App.vue";
 import TheLogin from "./pages/TheLogin.vue";
 import TheRegistration from "./pages/TheRegistration.vue";
 import TheTasks from "./pages/TheTasks.vue";
+import PostIt from "./components/layout/PostIt.vue";
+
+import TheHeader from "../src/components/layout/TheHeader.vue";
+import TheFooter from "../src/components/layout/TheFooter.vue";
 
 // import { useAuthStore } from "../src/components/store/userAuth.js";
 
@@ -47,6 +51,11 @@ const routes = [
     component: TheTasks,
     beforeEnter: ifAuthenticated,
   },
+  {
+    path: "/post",
+    name: "PostIt",
+    component: PostIt,
+  },
 ];
 
 export const router = createRouter({
@@ -60,6 +69,8 @@ export const router = createRouter({
 // });
 
 app.component("font-awesome-icon", FontAwesomeIcon);
+app.component("the-header", TheHeader);
+app.component("the-footer", TheFooter);
 
 app.use(pinia);
 app.use(router);

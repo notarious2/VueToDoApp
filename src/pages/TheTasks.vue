@@ -1,76 +1,78 @@
 <template>
   <div class="grid-container">
-    <header>HEADER GOES HERE</header>
+    <the-header class="header" />
     <div class="grid-item-todo">
-      <div v-if="!display" class="no-tasks">No Tasks to Display</div>
-      <div v-else>
-        <h1>{{ formatDate(new Date(tasksSlice.date)) }}</h1>
-        <div class="flex-headers">
-          <div class="header-number">#</div>
-          <div class="header-text">Description</div>
-          <div class="header-edit">Edit</div>
-          <div class="header-delete">Del.</div>
-          <div class="header-completed">Status</div>
-        </div>
-      </div>
-      <draggable
-        :list="tasksSlice.tasks"
-        item-key="task_id"
-        @change="updatePriority"
-      >
-        <template #item="{ element }">
-          <div class="flexbox">
-            <div class="flex-id">
-              <p>{{ element.priority }}</p>
-            </div>
-            <div
-              class="flex-text"
-              :class="{ editSelectedBorder: element.editable }"
-            >
-              <p
-                :contenteditable="element.editable"
-                @input="editText"
-                @blur="applyEditChanges(element)"
-              >
-                {{ element.text }}
-              </p>
-            </div>
-            <div class="flex-buttons">
-              <font-awesome-icon
-                icon="fas fa-pen"
-                class="edit-icon"
-                :class="{ editSelected: element.editable }"
-                @click="makeEditable(element)"
-              />
-              <font-awesome-icon
-                @click="deleteTask(element)"
-                icon="fas
-              fa-trash"
-                class="delete-icon"
-              />
-              <font-awesome-icon
-                icon="fas fa-check"
-                class="check-icon"
-                :class="{ isChecked: element.completed }"
-                :id="element.id"
-                v-model="element.completed"
-                @click="checkUncheck(element)"
-              />
-            </div>
+      <post-it>
+        <div v-if="!display" class="no-tasks">No Tasks to Display</div>
+        <div v-else>
+          <h1>{{ formatDate(new Date(tasksSlice.date)) }}</h1>
+          <div class="flex-headers">
+            <div class="header-number">#</div>
+            <div class="header-text">Description</div>
+            <div class="header-edit">Edit</div>
+            <div class="header-delete">Del.</div>
+            <div class="header-completed">Status</div>
           </div>
-        </template>
-      </draggable>
-      <form class="form-control" @submit.prevent="addNewTask">
-        <input
-          class="task-input"
-          @blur="clearInvalidInput"
-          @keyup="clearInvalidInput"
-          v-model="enteredText"
-          type="text"
-        />
-        <button class="button-74">add task</button>
-      </form>
-      <span v-if="invalidInput" class="invalid-input">Please Enter Text</span>
+        </div>
+        <draggable
+          :list="tasksSlice.tasks"
+          item-key="task_id"
+          @change="updatePriority"
+        >
+          <template #item="{ element }">
+            <div class="flexbox">
+              <div class="flex-id">
+                <p>{{ element.priority }}</p>
+              </div>
+              <div
+                class="flex-text"
+                :class="{ editSelectedBorder: element.editable }"
+              >
+                <p
+                  :contenteditable="element.editable"
+                  @input="editText"
+                  @blur="applyEditChanges(element)"
+                >
+                  {{ element.text }}
+                </p>
+              </div>
+              <div class="flex-buttons">
+                <font-awesome-icon
+                  icon="fas fa-pen"
+                  class="edit-icon"
+                  :class="{ editSelected: element.editable }"
+                  @click="makeEditable(element)"
+                />
+                <font-awesome-icon
+                  @click="deleteTask(element)"
+                  icon="fas
+              fa-trash"
+                  class="delete-icon"
+                />
+                <font-awesome-icon
+                  icon="fas fa-check"
+                  class="check-icon"
+                  :class="{ isChecked: element.completed }"
+                  :id="element.id"
+                  v-model="element.completed"
+                  @click="checkUncheck(element)"
+                />
+              </div>
+            </div>
+          </template>
+        </draggable>
+        <form class="form-control" @submit.prevent="addNewTask">
+          <input
+            class="task-input"
+            @blur="clearInvalidInput"
+            @keyup="clearInvalidInput"
+            v-model="enteredText"
+            type="text"
+          />
+          <button class="button-74">add task</button>
+        </form>
+        <span v-if="invalidInput" class="invalid-input">Please Enter Text</span>
+      </post-it>
     </div>
     <div class="grid-item-calendar">
       <h1>{{ date }}</h1>
@@ -95,11 +97,8 @@
           <span id="uncomplete-tasks">{{ notCompletedTasks }}</span>
         </p>
       </div>
-      <button @click="authStore.logout()">Logout</button>
     </div>
-    <footer>
-      <p>FOOTER GOES HERE</p>
-    </footer>
+    <the-footer class="footer" />
   </div>
 </template>
 
@@ -107,6 +106,7 @@
 // eslint-disable-next-line
 import { reactive, ref, onMounted, onUpdated, onBeforeMount } from "vue";
 import draggable from "vuedraggable";
+import PostIt from "../components/layout/PostIt.vue";
 
 import authHeader from "@/components/services/auth-header";
 import axios from "axios";
@@ -184,12 +184,15 @@ const totalTasks = ref(null);
 
 function countTasks() {
   if ("date" in tasksSlice.value) {
+    console.log("YES");
     totalTasks.value = tasksSlice.value.tasks.length;
     notCompletedTasks.value = tasksSlice.value.tasks.filter(
       (ob) => !ob.completed
     ).length;
     completedTasks.value = totalTasks.value - notCompletedTasks.value;
   } else {
+    console.log("NO");
+
     totalTasks.value = null;
     completedTasks.value = null;
     notCompletedTasks.value = null;
@@ -204,9 +207,9 @@ if (tasksSlice.value.length > 0) {
 
 onMounted(async () => {
   tasksList.value = await loadTasks();
-  countTasks();
   loadOneTask(date.value);
-
+  countTasks();
+  console.log(tasksSlice.value);
   // updateList();
 });
 
@@ -287,7 +290,6 @@ function makeEditable(element) {
 // adding the task - Post Request
 
 async function addNewTask() {
-  console.log("Add request");
   // priority is 1 if there are not tasks on that day, else it is autoincremented
   const priority =
     "date" in tasksSlice.value ? tasksSlice.value.tasks.length + 1 : 1;
@@ -305,6 +307,8 @@ async function addNewTask() {
           headers: authHeader(),
         }
       );
+      console.log("Add request");
+
       // rerender ALL to-do tasks
       tasksList.value = await loadTasks();
       // get selected date's slice
@@ -495,42 +499,25 @@ h1 {
   gap: 10px;
 }
 
-header {
-  grid-area: header;
-  background: skyblue;
-  /* making HEADER inside of the grid flexbox */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-footer {
-  grid-area: footer;
-  background: lightblue;
-  /* making FOOTER inside of the grid flexbox */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .grid-item-todo {
   grid-area: todo;
-  background: lightgreen;
 }
 .grid-item-calendar {
   grid-area: calendar;
-  background: lightsteelblue;
+  /* background: #e7e7b6; */
 }
 
 @media (max-width: 768px) {
   .grid-container {
     grid-template-columns: 1fr;
     grid-template-rows: 50px 1fr 1fr 50px;
+    gap: 1px;
   }
-  header {
+  .header {
     grid-row: 1;
   }
   .grid-item-todo {
+    margin-top: 2px;
     grid-row: 2;
     grid-column: 1;
   }
@@ -538,7 +525,7 @@ footer {
     grid-row: 3;
     grid-column: 1;
   }
-  footer {
+  .footer {
     grid-row: 4/5;
   }
   .form-control {
@@ -558,10 +545,12 @@ footer {
 
 .flex-headers {
   display: flex;
-  background-color: rgb(97, 213, 136);
+  /* background-color: rgb(153, 185, 66); */
+  border-bottom: 2px solid black;
   margin: 0px 10px;
-  font-size: 14px;
+  font-size: 16px;
   padding: 5px 0px;
+  font-weight: bold;
 }
 .header-number {
   text-align: center;
@@ -591,9 +580,12 @@ footer {
   margin-left: 10px;
   margin-right: 10px;
   gap: 5px;
+  margin-top: 0px;
 }
 .flex-text {
-  background: lightgray;
+  /* background: lightgray; */
+  text-align: left;
+  margin-left: 15px;
   flex: 1;
 }
 
@@ -610,7 +602,7 @@ footer {
   border: 1px solid orange;
 }
 .flex-buttons {
-  background: lightyellow;
+  /* background: lightyellow; */
   flex-basis: 70px;
   display: flex;
   align-items: center;
