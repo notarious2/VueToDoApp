@@ -403,6 +403,9 @@ h1 {
 
 .flex-id {
   flex-basis: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .flex-id p {
   font-weight: bold;

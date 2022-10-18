@@ -87,15 +87,14 @@ function toggleShow() {
     passwordType.value = "password";
   }
 }
-function submitAuthDetails() {
+async function submitAuthDetails() {
   const params = {
     name: name.value,
     email: email.value,
     username: username.value,
     password: password.value,
   };
-
-  axios
+  await axios
     .post("http://localhost:8000/user", params)
     .then((response) => {
       console.log(response.data);
