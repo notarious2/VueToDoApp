@@ -3,14 +3,22 @@
     <the-header class="header" />
     <div class="grid-item-todo">
       <post-it>
-        <div v-if="!display" class="no-tasks">No Tasks to Display</div>
+        <div
+          v-if="!display"
+          class="no-tasks"
+          style="display: flex; flex-direction: column"
+        >
+          <div>{{ formatDate(new Date(date)) }}</div>
+          <h2>No Tasks to Display</h2>
+        </div>
+
         <div v-else>
           <h1>{{ formatDate(new Date(tasksSlice.date)) }}</h1>
           <div class="flex-headers">
             <div class="header-number">#</div>
             <div class="header-text">Description</div>
-            <div class="header-edit">Edit</div>
-            <div class="header-delete">Del.</div>
+            <div class="header-edit" v-show="showButtons">Edit</div>
+            <div class="header-delete" v-show="showButtons">Del.</div>
             <div class="header-completed">Status</div>
           </div>
         </div>
@@ -20,7 +28,11 @@
           @change="updatePriority"
         >
           <template #item="{ element }">
-            <div class="flexbox">
+            <div
+              class="flexbox"
+              @mouseover="showButtons = element.priority"
+              @mouseout="showButtons = null"
+            >
               <div class="flex-id">
                 <p>{{ element.priority }}</p>
               </div>
@@ -42,12 +54,14 @@
                   class="edit-icon"
                   :class="{ editSelected: element.editable }"
                   @click="makeEditable(element)"
+                  v-show="showButtons === element.priority"
                 />
                 <font-awesome-icon
                   @click="deleteTask(element)"
                   icon="fas
               fa-trash"
                   class="delete-icon"
+                  v-show="showButtons === element.priority"
                 />
                 <font-awesome-icon
                   icon="fas fa-check"
@@ -104,7 +118,7 @@
 
 <script setup>
 // eslint-disable-next-line
-import { reactive, ref, onMounted, onUpdated, onBeforeMount } from "vue";
+import { reactive, ref, onMounted, onUpdated, watch } from "vue";
 import draggable from "vuedraggable";
 import PostIt from "../components/layout/PostIt.vue";
 
@@ -121,6 +135,8 @@ const invalidInput = ref(false);
 const enteredText = ref("");
 
 const editedText = ref("");
+
+const showButtons = ref(null);
 
 // Getting array for specific date
 const tasksList = reactive([]);
@@ -182,23 +198,6 @@ const notCompletedTasks = ref(null);
 const completedTasks = ref(null);
 const totalTasks = ref(null);
 
-function countTasks() {
-  if ("date" in tasksSlice.value) {
-    console.log("YES");
-    totalTasks.value = tasksSlice.value.tasks.length;
-    notCompletedTasks.value = tasksSlice.value.tasks.filter(
-      (ob) => !ob.completed
-    ).length;
-    completedTasks.value = totalTasks.value - notCompletedTasks.value;
-  } else {
-    console.log("NO");
-
-    totalTasks.value = null;
-    completedTasks.value = null;
-    notCompletedTasks.value = null;
-  }
-}
-
 if (tasksSlice.value.length > 0) {
   notCompletedTasks.value = tasksSlice.value.tasks.filter(
     (ob) => !ob.completed
@@ -208,13 +207,24 @@ if (tasksSlice.value.length > 0) {
 onMounted(async () => {
   tasksList.value = await loadTasks();
   loadOneTask(date.value);
-  countTasks();
-  console.log(tasksSlice.value);
-  // updateList();
 });
 
 onUpdated(() => {
-  countTasks();
+  console.log("Updated!");
+});
+
+watch([tasksSlice], () => {
+  if ("date" in tasksSlice.value) {
+    totalTasks.value = tasksSlice.value.tasks.length;
+    notCompletedTasks.value = tasksSlice.value.tasks.filter(
+      (ob) => !ob.completed
+    ).length;
+    completedTasks.value = totalTasks.value - notCompletedTasks.value;
+  } else {
+    totalTasks.value = null;
+    completedTasks.value = null;
+    notCompletedTasks.value = null;
+  }
 });
 
 // custom function to return date in DD month-long YYYY format
@@ -381,7 +391,6 @@ async function checkUncheck(element) {
       localStorage.removeItem("user");
     }
   }
-  countTasks();
 }
 
 // Deleting specific task
@@ -560,15 +569,14 @@ h1 {
   flex-basis: 20px;
 }
 .header-text {
-  flex-grow: 1;
+  /* flex-grow: 1; */
+  margin-right: auto;
+  margin-left: 10px;
 }
 
 .header-edit,
-.header-delete {
-  margin-right: 5px;
-}
+.header-delete,
 .header-completed {
-  margin-left: 5px;
   margin-right: 5px;
 }
 
@@ -610,8 +618,13 @@ h1 {
   padding: 5px;
 }
 
-.edit-icon {
+.edit-icon,
+.delete-icon {
   font-size: 18px;
+  margin-right: 5px;
+}
+.edit-icon:hover {
+  color: rgb(59, 166, 59);
 }
 
 .delete-icon:hover {
@@ -620,7 +633,8 @@ h1 {
 
 /* CHECKBOX */
 .check-icon {
-  margin-left: 15px;
+  margin-left: auto;
+  margin-right: 5px;
   color: #b04b4b;
   font-size: 26px;
 }

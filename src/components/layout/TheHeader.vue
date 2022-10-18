@@ -12,7 +12,7 @@
 <script setup>
 import { useAuthStore } from "../store/userAuth.js";
 const authStore = useAuthStore();
-console.log(authStore.isAuthenticated);
+// console.log(authStore.isAuthenticated);
 </script>
 
 <style scoped>
