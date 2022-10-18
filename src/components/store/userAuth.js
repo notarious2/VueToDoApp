@@ -13,7 +13,7 @@ export const useAuthStore = defineStore("authentication", {
     isAuthenticated: (state) => !!state.token,
   },
   actions: {
-    login(username, password) {
+    async login(username, password) {
       const params = new URLSearchParams();
       params.append("username", username);
       params.append("password", password);
@@ -22,7 +22,7 @@ export const useAuthStore = defineStore("authentication", {
         Accept: "application/json",
         "Content-Type": "application/x-www-form-urlencoded",
       };
-      axios
+      await axios
         .post("http://localhost:8000/login", params, {
           headers: headers,
         })

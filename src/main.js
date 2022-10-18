@@ -9,7 +9,7 @@ import PostIt from "./components/layout/PostIt.vue";
 import TheHeader from "../src/components/layout/TheHeader.vue";
 import TheFooter from "../src/components/layout/TheFooter.vue";
 
-// import { useAuthStore } from "../src/components/store/userAuth.js";
+import { useAuthStore } from "../src/components/store/userAuth.js";
 
 import { createPinia } from "pinia";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -21,7 +21,7 @@ import { far } from "@fortawesome/free-regular-svg-icons";
 library.add(fab, fas, far);
 
 const ifAuthenticated = (to, from, next) => {
-  if (JSON.parse(localStorage.getItem("user"))) {
+  if (JSON.parse(localStorage.getItem("user")) && !authStore.errorLogIn) {
     next();
     return;
   } else {
@@ -74,6 +74,6 @@ app.component("the-footer", TheFooter);
 
 app.use(pinia);
 app.use(router);
-// const authStore = useAuthStore();
+const authStore = useAuthStore();
 
 app.mount("#app");

@@ -25,7 +25,7 @@
         <draggable
           :list="tasksSlice.tasks"
           item-key="task_id"
-          @change="updatePriority"
+          @change="taskStore.updatePriority"
         >
           <template #item="{ element }">
             <div
@@ -43,7 +43,7 @@
                 <p
                   :contenteditable="element.editable"
                   @input="editText"
-                  @blur="applyEditChanges(element)"
+                  @blur="taskStore.applyEditChanges(element)"
                 >
                   {{ element.text }}
                 </p>
@@ -57,7 +57,7 @@
                   v-show="showButtons === element.priority"
                 />
                 <font-awesome-icon
-                  @click="deleteTask(element)"
+                  @click="taskStore.deleteTask(element)"
                   icon="fas
               fa-trash"
                   class="delete-icon"
@@ -69,17 +69,17 @@
                   :class="{ isChecked: element.completed }"
                   :id="element.id"
                   v-model="element.completed"
-                  @click="checkUncheck(element)"
+                  @click="taskStore.checkUncheck(element)"
                 />
               </div>
             </div>
           </template>
         </draggable>
-        <form class="form-control" @submit.prevent="addNewTask">
+        <form class="form-control" @submit.prevent="taskStore.addNewTask">
           <input
             class="task-input"
-            @blur="clearInvalidInput"
-            @keyup="clearInvalidInput"
+            @blur="taskStore.clearInvalidInput"
+            @keyup="taskStore.clearInvalidInput"
             v-model="enteredText"
             type="text"
           />
@@ -117,87 +117,32 @@
 </template>
 
 <script setup>
+/* eslint-disable */
 // eslint-disable-next-line
-import { reactive, ref, onMounted, onUpdated, watch } from "vue";
+import { ref, onMounted, watch } from "vue";
 import draggable from "vuedraggable";
 import PostIt from "../components/layout/PostIt.vue";
 
-import authHeader from "@/components/services/auth-header";
-import axios from "axios";
+import { storeToRefs } from "pinia";
+import { useTaskStore } from "../components/store/TaskStore";
 
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 
-const date = ref(new Date().toISOString().slice(0, 10));
+const taskStore = useTaskStore();
 
-const invalidInput = ref(false);
-
-const enteredText = ref("");
+const { display, tasksList, tasksSlice, date, invalidInput, enteredText } =
+  storeToRefs(taskStore);
 
 const editedText = ref("");
 
 const showButtons = ref(null);
 
-// Getting array for specific date
-const tasksList = reactive([]);
-const tasksSlice = ref([]);
-const display = ref(false);
-
-async function loadTasks() {
-  try {
-    const response = await axios.get("http://localhost:8000/task", {
-      headers: authHeader(),
-    });
-    // working with response
-    // console.log(response);
-    const result = response.data;
-
-    const newArray = reactive([]);
-    result.forEach((element) => {
-      if (!newArray.filter((arr) => arr["date"] === element.date).length > 0) {
-        newArray.push({
-          date: element.date,
-          tasks: [{ ...element, editable: false }],
-        });
-      } else {
-        const idx = newArray.findIndex((arr) => arr.date === element.date);
-        newArray[idx].tasks.push({ ...element, editable: false });
-      }
-    });
-    // tasksList.value = newArray;
-    console.log("Load...");
-    return newArray;
-  } catch (err) {
-    if (err.response.status === 401) {
-      localStorage.removeItem("user");
-    }
-    console.log(err.response.status);
-  }
-}
-function loadOneTask(task_date) {
-  if (tasksList.value.filter((arr) => arr["date"] === task_date).length === 0) {
-    // eslint-disable-next-line
-    display.value = false;
-    tasksSlice.value = [];
-  } else {
-    // console.log(tasksList.value.filter((arr) => arr["date"] === task_date)[0]);
-    tasksSlice.value = tasksList.value.filter(
-      (arr) => arr["date"] === task_date
-    )[0];
-    display.value = true;
-    // SORT THE SLICE
-    tasksSlice.value.tasks.sort((a, b) =>
-      a.priority > b.priority ? 1 : b.priority > a.priority ? -1 : 0
-    );
-  }
-}
-// SEE IF LOGGED IN
-
-// Count the number of tasks
+// Count the number of tasks WILL BE USED IN WATCHER
 const notCompletedTasks = ref(null);
 const completedTasks = ref(null);
 const totalTasks = ref(null);
-
+// count number of Not completed tasks
 if (tasksSlice.value.length > 0) {
   notCompletedTasks.value = tasksSlice.value.tasks.filter(
     (ob) => !ob.completed
@@ -205,12 +150,10 @@ if (tasksSlice.value.length > 0) {
 }
 
 onMounted(async () => {
-  tasksList.value = await loadTasks();
-  loadOneTask(date.value);
-});
-
-onUpdated(() => {
-  console.log("Updated!");
+  tasksList.value = await taskStore.loadTasks();
+  taskStore.loadOneTask(date.value);
+  // tasksList.value = await loadTasks();
+  // loadOneTask(date.value);
 });
 
 watch([tasksSlice], () => {
@@ -236,54 +179,26 @@ function formatDate(dateInput) {
   });
 }
 
-// clear invalid input - to be used at blur
-function clearInvalidInput() {
-  invalidInput.value = false;
-}
-
 // WORKING WITH CALENDAR
 
 const handleDate = (modelData) => {
   date.value = modelData.toISOString().slice(0, 10);
   // getting new slice based on picked date
-  tasksSlice.value = tasksList.filter((arr) => arr["date"] === date.value)[0];
+  tasksSlice.value = tasksList.value.filter(
+    (arr) => arr["date"] === date.value
+  )[0];
   display.value = true;
-
   // creating empty array if there no tasks on picked date
   if (!tasksSlice.value) {
     tasksSlice.value = ref([]);
     display.value = false;
   }
-  loadOneTask(date.value);
+  taskStore.loadOneTask(date.value);
 };
 
 // listen to input inside edited paragraph text
 function editText(event) {
   editedText.value = event.target.innerText;
-}
-
-// Apply above changes at blur
-async function applyEditChanges(element) {
-  // No need to send HTTP request if Text is unchanged
-  if (editedText.value && editedText.value !== element.text) {
-    try {
-      await axios.patch(
-        "http://localhost:8000/task/update/" + element.task_id,
-        { text: editedText.value },
-        { headers: authHeader() }
-      );
-      console.log("Edited!");
-      // rerender ALL to-do tasks
-      tasksList.value = await loadTasks();
-      // get selected date's slice
-      loadOneTask(date.value);
-    } catch (err) {
-      if (err.response.status === 401) {
-        localStorage.removeItem("user");
-      }
-      console.log(err);
-    }
-  }
 }
 
 // make SELECTED paragraph tag editable
@@ -295,124 +210,6 @@ function makeEditable(element) {
         !tasksSlice.value.tasks[idx].editable;
     }
   });
-}
-
-// adding the task - Post Request
-
-async function addNewTask() {
-  // priority is 1 if there are not tasks on that day, else it is autoincremented
-  const priority =
-    "date" in tasksSlice.value ? tasksSlice.value.tasks.length + 1 : 1;
-  if (enteredText.value !== "") {
-    try {
-      await axios.post(
-        "http://localhost:8000/task",
-        {
-          priority: priority,
-          date: date.value,
-          text: enteredText.value,
-          completed: false,
-        },
-        {
-          headers: authHeader(),
-        }
-      );
-      console.log("Add request");
-
-      // rerender ALL to-do tasks
-      tasksList.value = await loadTasks();
-      // get selected date's slice
-      loadOneTask(date.value);
-      //clear input field
-      enteredText.value = "";
-    } catch (err) {
-      if (err.response.status === 401) {
-        localStorage.removeItem("user");
-      }
-      console.log(err);
-    }
-  } else {
-    invalidInput.value = true;
-  }
-}
-
-// update tasks index/id on change - on drag / also used for deletion
-async function updatePriority() {
-  // GET changed priorities FIRST
-  const prioritiesList = {};
-  for (const idx in tasksSlice.value.tasks) {
-    if (tasksSlice.value.tasks[idx].priority !== Number(idx) + 1) {
-      prioritiesList[tasksSlice.value.tasks[idx].task_id] = Number(idx) + 1;
-    }
-  }
-  if (Object.keys(prioritiesList).length > 0) {
-    const payload = {};
-    payload[date.value] = prioritiesList;
-    // Update MULTIPLE field with ONE PATCH Request
-    try {
-      await axios.patch(
-        "http://localhost:8000/task/update_order",
-        {
-          ...payload,
-        },
-        {
-          headers: authHeader(),
-        }
-      );
-      console.log("Multiple Rows Update!");
-    } catch (err) {
-      console.log(err);
-      if (err.response.status === 401) {
-        localStorage.removeItem("user");
-      }
-    }
-
-    tasksList.value = await loadTasks();
-    loadOneTask(date.value);
-  }
-}
-
-// Checking or unchecking specific object in an array
-async function checkUncheck(element) {
-  try {
-    await axios.patch(
-      "http://localhost:8000/task/update/" + element.task_id,
-      { completed: element.completed ? false : true },
-      { headers: authHeader() }
-    );
-    console.log("Completed!");
-    // rerender ALL to-do tasks
-    tasksList.value = await loadTasks();
-    // get selected date's slice
-    loadOneTask(date.value);
-  } catch (err) {
-    console.log(err);
-    if (err.response.status === 401) {
-      localStorage.removeItem("user");
-    }
-  }
-}
-
-// Deleting specific task
-
-async function deleteTask(element) {
-  try {
-    await axios.get("http://localhost:8000/task/delete/" + element.task_id, {
-      headers: authHeader(),
-    });
-
-    // rerender ALL to-do tasks
-    console.log("Deleted!");
-    tasksList.value = await loadTasks();
-    // get selected date's slice
-    loadOneTask(date.value);
-  } catch (err) {
-    console.log(err);
-    if (err.response.status === 401) {
-      localStorage.removeItem("user");
-    }
-  }
-  updatePriority();
 }
 </script>
 
