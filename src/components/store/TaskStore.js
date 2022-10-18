@@ -183,6 +183,7 @@ export const useTaskStore = defineStore("tasks", {
         this.loadOneTask(this.date);
       }
     },
+
     // Apply EDIT changes at blur
     async applyEditChanges(element) {
       // No need to send HTTP request if Text is unchanged

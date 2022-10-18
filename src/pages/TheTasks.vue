@@ -131,10 +131,17 @@ import "@vuepic/vue-datepicker/dist/main.css";
 
 const taskStore = useTaskStore();
 
-const { display, tasksList, tasksSlice, date, invalidInput, enteredText } =
-  storeToRefs(taskStore);
+const {
+  display,
+  tasksList,
+  tasksSlice,
+  date,
+  invalidInput,
+  enteredText,
+  editedText,
+} = storeToRefs(taskStore);
 
-const editedText = ref("");
+// const editedText = ref("");
 
 const showButtons = ref(null);
 
