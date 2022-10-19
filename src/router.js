@@ -3,18 +3,7 @@ import TheLogin from "./pages/TheLogin";
 import TheRegistration from "./pages/TheRegistration.vue";
 import TheTasks from "./pages/TheTasks.vue";
 
-// import { useAuthStore } from "../src/components/store/userAuth.js";
-
-// const authStore = useAuthStore();
-
-// const ifAuthenticated = (to, from, next) => {
-//   if (JSON.parse(localStorage.getItem("user")) && !authStore.errorLogIn) {
-//     next();
-//     return;
-//   } else {
-//     next("/auth");
-//   }
-// };
+import { useAuthStore } from "../src/components/store/userAuth.js";
 
 const routes = [
   {
@@ -33,12 +22,22 @@ const routes = [
     name: "Tasks",
     component: TheTasks,
     // beforeEnter: ifAuthenticated,
+    meta: { requiresAuth: true },
   },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+router.beforeEach(async (to, from, next) => {
+  const authStore = useAuthStore();
+  if (to.meta.requiresAuth && !authStore.user && !authStore.isAuthenticated) {
+    next("/auth");
+  } else {
+    next();
+  }
 });
 
 export default router;
