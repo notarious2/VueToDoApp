@@ -2,10 +2,16 @@ import { createRouter, createWebHistory } from "vue-router";
 import TheLogin from "./pages/TheLogin";
 import TheRegistration from "./pages/TheRegistration.vue";
 import TheTasks from "./pages/TheTasks.vue";
+import TheHome from "./pages/TheHome.vue";
 
 import { useAuthStore } from "../src/components/store/userAuth.js";
 
 const routes = [
+  {
+    path: "/",
+    name: "Home",
+    component: TheHome,
+  },
   {
     path: "/auth",
     name: "Authorization",

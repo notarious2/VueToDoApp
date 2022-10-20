@@ -15,7 +15,7 @@ export const useTaskStore = defineStore("tasks", {
   actions: {
     async loadTasks() {
       try {
-        const response = await axios.get("http://localhost:8000/task", {
+        const response = await axios.get("task", {
           headers: authHeader(),
         });
         // working with response
@@ -67,7 +67,7 @@ export const useTaskStore = defineStore("tasks", {
     async checkUncheck(element) {
       try {
         await axios.patch(
-          "http://localhost:8000/task/update/" + element.task_id,
+          "task/update/" + element.task_id,
           { completed: element.completed ? false : true },
           { headers: authHeader() }
         );
@@ -91,7 +91,7 @@ export const useTaskStore = defineStore("tasks", {
       if (this.enteredText !== "") {
         try {
           await axios.post(
-            "http://localhost:8000/task",
+            "task",
             {
               priority: priority,
               date: this.date,
@@ -128,12 +128,9 @@ export const useTaskStore = defineStore("tasks", {
 
     async deleteTask(element) {
       try {
-        await axios.get(
-          "http://localhost:8000/task/delete/" + element.task_id,
-          {
-            headers: authHeader(),
-          }
-        );
+        await axios.get("task/delete/" + element.task_id, {
+          headers: authHeader(),
+        });
 
         // rerender ALL to-do tasks
         console.log("Deleted!");
@@ -163,7 +160,7 @@ export const useTaskStore = defineStore("tasks", {
         // Update MULTIPLE field with ONE PATCH Request
         try {
           await axios.patch(
-            "http://localhost:8000/task/update_order",
+            "task/update_order",
             {
               ...payload,
             },
@@ -190,7 +187,7 @@ export const useTaskStore = defineStore("tasks", {
       if (this.editedText && this.editedText !== element.text) {
         try {
           await axios.patch(
-            "http://localhost:8000/task/update/" + element.task_id,
+            "task/update/" + element.task_id,
             { text: this.editedText },
             { headers: authHeader() }
           );

@@ -3,6 +3,8 @@ import App from "./App.vue";
 
 import router from "./router.js";
 
+import axios from "axios";
+
 import TheHeader from "../src/components/layout/TheHeader.vue";
 import TheFooter from "../src/components/layout/TheFooter.vue";
 
@@ -20,10 +22,7 @@ const app = createApp(App);
 
 const pinia = createPinia();
 
-// Router has to be used as a plugin in pinia
-// pinia.use(({ store }) => {
-//   store.router = markRaw(router);
-// });
+axios.defaults.baseURL = "http://localhost:8000/";
 
 app.component("font-awesome-icon", FontAwesomeIcon);
 app.component("the-header", TheHeader);

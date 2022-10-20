@@ -23,7 +23,7 @@ export const useAuthStore = defineStore("authentication", {
         "Content-Type": "application/x-www-form-urlencoded",
       };
       await axios
-        .post("http://localhost:8000/login", params, {
+        .post("login", params, {
           headers: headers,
         })
         .then((response) => {

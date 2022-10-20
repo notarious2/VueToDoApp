@@ -95,7 +95,7 @@ async function submitAuthDetails() {
     password: password.value,
   };
   await axios
-    .post("http://localhost:8000/user", params)
+    .post("user", params)
     .then((response) => {
       console.log(response.data);
       router.push({ path: "/auth" });
