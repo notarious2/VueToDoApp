@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="post-it">
-      <form @submit.prevent="submitAuthDetails">
+      <form @submit.prevent="submitRegistrationDetails">
         <div class="container">
           <h1>Register</h1>
           <div class="icon-div">
@@ -65,10 +65,8 @@
 
 <script setup>
 import { ref, watch } from "vue";
-import { useRouter } from "vue-router";
-import axios from "axios";
-
-const router = useRouter();
+import { useAuthStore } from "../components/store/userAuth.js";
+const authStore = useAuthStore();
 
 const name = ref("");
 const email = ref("");
@@ -87,22 +85,14 @@ function toggleShow() {
     passwordType.value = "password";
   }
 }
-async function submitAuthDetails() {
-  const params = {
+async function submitRegistrationDetails() {
+  const payload = {
     name: name.value,
     email: email.value,
     username: username.value,
     password: password.value,
   };
-  await axios
-    .post("user", params)
-    .then((response) => {
-      console.log(response.data);
-      router.push({ path: "/auth" });
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  authStore.register(payload);
 }
 
 watch([password, passwordConfirmation], () => {

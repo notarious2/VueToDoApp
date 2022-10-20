@@ -38,6 +38,19 @@ export const useAuthStore = defineStore("authentication", {
           this.errorLogIn = true;
         });
     },
+    async register(payload) {
+      await axios
+        .post("user", payload)
+        .then((response) => {
+          router.push({ path: "/auth" });
+          console.log(
+            `User ${response.data.username} has been successfully created!`
+          );
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     logout() {
       this.user = null;
       localStorage.removeItem("user");

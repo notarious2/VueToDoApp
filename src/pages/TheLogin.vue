@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="post-it">
-      <form @submit.prevent="submitAuthDetails">
+      <form @submit.prevent="submitLogDetails">
         <div class="container">
           <h1>Login</h1>
           <div class="icon-div">
@@ -50,9 +50,6 @@
 <script setup>
 import { ref } from "vue";
 import { useAuthStore } from "../components/store/userAuth.js";
-// import axios from "axios";
-// import { useRouter } from "vue-router";
-// const router = useRouter();
 
 const authStore = useAuthStore();
 
@@ -69,7 +66,7 @@ function toggleShow() {
     passwordType.value = "password";
   }
 }
-function submitAuthDetails() {
+function submitLogDetails() {
   authStore.login(username.value, password.value);
 }
 </script>
