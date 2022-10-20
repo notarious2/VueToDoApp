@@ -4,6 +4,9 @@
 
     <nav>
       <h1><router-link to="/tasks"> to-do app </router-link></h1>
+      <h3 class="greetings">
+        Hello <span>{{ helloUser }}!</span>
+      </h3>
     </nav>
     <button class="button-74" @click="authStore.logout()">Logout</button>
   </header>
@@ -12,7 +15,7 @@
 <script setup>
 import { useAuthStore } from "../store/userAuth.js";
 const authStore = useAuthStore();
-// console.log(authStore.isAuthenticated);
+const helloUser = JSON.parse(localStorage.getItem("user")).username;
 </script>
 
 <style scoped>
@@ -26,9 +29,19 @@ header {
   align-items: center;
 }
 
+.greetings {
+  margin-left: 30%;
+  margin-top: 25px;
+  align-items: center;
+}
+.greetings span {
+  color: #127b14;
+}
+
 header nav {
-  margin-right: auto;
   margin-left: 10px;
+  display: flex;
+  width: 100%;
 }
 
 header a {
