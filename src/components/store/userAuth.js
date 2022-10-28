@@ -52,7 +52,7 @@ export const useAuthStore = defineStore("authentication", {
         });
     },
     logout() {
-      this.user = null;
+      this.token = null;
       localStorage.removeItem("user");
       router.push("/auth");
     },

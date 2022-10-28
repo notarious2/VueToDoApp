@@ -6,29 +6,44 @@
       <h1 class="app-name">
         <router-link to="/tasks"> to-do app </router-link>
       </h1>
-      <h3 class="greetings" v-if="helloUser">
+      <h3 class="greetings" v-if="loggedIn">
         Hello <span>{{ helloUser }}!</span>
       </h3>
     </nav>
-    <button class="button-74" @click="authStore.logout()">Logout</button>
+    <button
+      v-if="!loggedIn"
+      @click="router.push({ name: 'Registration' })"
+      class="button-74"
+    >
+      Register
+    </button>
+    <button
+      v-if="!loggedIn"
+      @click="router.push({ name: 'Authorization' })"
+      class="button-74"
+    >
+      Log In
+    </button>
+    <button v-else class="button-74" @click="authStore.logout()">Logout</button>
   </header>
 </template>
 
 <script setup>
 import { useAuthStore } from "../store/userAuth.js";
-import { ref, computed } from "vue";
+import { computed } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 const authStore = useAuthStore();
-
-const helloUser = ref("");
-
 const loggedIn = computed(() => authStore.isAuthenticated);
 
-console.log("logged", loggedIn.value);
-console.log("loggedA", authStore.isAuthenticated);
-
-console.log(localStorage.getItem("user"));
-
-// const helloUser = JSON.parse(localStorage.getItem("user")).username;
+const helloUser = computed(() => {
+  if (loggedIn.value) {
+    return JSON.parse(localStorage.getItem("user")).username;
+  } else {
+    return false;
+  }
+});
 </script>
 
 <style scoped>

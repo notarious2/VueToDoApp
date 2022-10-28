@@ -6,7 +6,7 @@
 
 <style scoped>
 .post-it-note {
-  margin: 10px;
+  margin: 20px 0px 0px 10px;
   padding: 2em;
   background: #ffffd4;
   position: relative;
@@ -33,5 +33,11 @@
   border-width: 2em 2em 0 0;
   border-style: solid;
   border-color: #dcdc46 transparent;
+}
+
+@media (max-width: 768px) {
+  .post-it-note {
+    margin-right: 10px;
+  }
 }
 </style>

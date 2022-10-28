@@ -376,7 +376,7 @@ p {
 /* Change border of the text if edit is selected*/
 
 .editSelectedBorder {
-  border: 1px solid orange;
+  border: 0.5px solid orange;
 }
 .flex-buttons {
   /* background: lightyellow; */
@@ -393,7 +393,7 @@ p {
   margin-right: 5px;
 }
 .edit-icon:hover {
-  color: rgb(59, 166, 59);
+  color: #c36241;
 }
 
 .delete-icon:hover {
@@ -407,11 +407,13 @@ p {
   color: #b04b4b;
   font-size: 26px;
 }
-
+.check-icon:hover {
+  filter: brightness(75%);
+}
 /* Make pen green if edit is selected*/
 
 .editSelected {
-  color: green;
+  color: #c36241;
   margin-top: 5px;
 }
 
