@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import authHeader from "../services/auth-header";
+import router from "../../router.js";
 
 export const useTaskStore = defineStore("tasks", {
   state: () => ({
@@ -40,6 +41,7 @@ export const useTaskStore = defineStore("tasks", {
       } catch (err) {
         if (err.response.status === 401) {
           localStorage.removeItem("user");
+          router.push({ name: "Authorization" });
         }
         console.log(err.response.status);
       }
@@ -80,6 +82,7 @@ export const useTaskStore = defineStore("tasks", {
         console.log(err);
         if (err.response.status === 401) {
           localStorage.removeItem("user");
+          router.push({ name: "Authorization" });
         }
       }
     },
@@ -113,6 +116,7 @@ export const useTaskStore = defineStore("tasks", {
         } catch (err) {
           if (err.response.status === 401) {
             localStorage.removeItem("user");
+            router.push({ name: "Authorization" });
           }
           console.log(err);
         }
@@ -141,6 +145,7 @@ export const useTaskStore = defineStore("tasks", {
         console.log(err);
         if (err.response.status === 401) {
           localStorage.removeItem("user");
+          router.push({ name: "Authorization" });
         }
       }
       this.updatePriority();
@@ -173,6 +178,7 @@ export const useTaskStore = defineStore("tasks", {
           console.log(err);
           if (err.response.status === 401) {
             localStorage.removeItem("user");
+            router.push({ name: "Authorization" });
           }
         }
 
@@ -199,6 +205,7 @@ export const useTaskStore = defineStore("tasks", {
         } catch (err) {
           if (err.response.status === 401) {
             localStorage.removeItem("user");
+            router.push({ name: "Authorization" });
           }
           console.log(err);
         }
