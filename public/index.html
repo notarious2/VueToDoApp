@@ -12,13 +12,6 @@
     />
   </head>
   <body>
-    <noscript>
-      <strong
-        >We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work
-        properly without JavaScript enabled. Please enable it to
-        continue.</strong
-      >
-    </noscript>
     <div id="app"></div>
     <!-- built files will be auto injected -->
   </body>
@@ -27,6 +20,61 @@
 <style>
   body,
   #app {
-    margin: 0px 3px;
+    margin: 0px;
+    background-color: #ffffed;
+  }
+  /* STYLING CALENDAR */
+  #app
+    > div
+    > div.grid-item-calendar
+    > div
+    > div.dp__menu.dp__relative.dp__theme_light {
+    background-color: #fff59e;
+    flex-grow: 1;
+    margin: 10px 10px;
+  }
+  #app
+    > div
+    > div.grid-item-calendar
+    > div.dp__main.dp__theme_light.dp__flex_display
+    > div.dp__menu.dp__relative.dp__theme_light
+    > div
+    > div
+    > div:nth-child(1)
+    > div
+    > div.dp__month_year_row {
+    background-color: #fff157;
+  }
+
+  #app
+    > div
+    > div.grid-item-calendar
+    > div
+    > div.dp__menu.dp__relative.dp__theme_light
+    > div
+    > div
+    > div:nth-child(1)
+    > div
+    > div.dp__calendar
+    > div
+    > div
+    > div.dp__calendar_header {
+    width: 100%;
+    background-color: #fff157;
+  }
+  #app
+    > div
+    > div.grid-item-calendar
+    > div
+    > div.dp__menu.dp__relative.dp__theme_light
+    > div
+    > div
+    > div:nth-child(1)
+    > div
+    > div.dp__calendar
+    > div
+    > div
+    > div.dp__calendar {
+    width: 100%;
   }
 </style>

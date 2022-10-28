@@ -6,13 +6,14 @@
 
 <style scoped>
 .post-it-note {
+  margin: 10px;
   padding: 2em;
-  background: #ffffe0;
+  background: #ffffd4;
   position: relative;
   min-height: 10em;
   margin-bottom: 30px;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
-    rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+  box-shadow: rgba(17, 17, 26, 0.05) 0px 4px 16px,
+    rgba(17, 17, 26, 0.05) 0px 8px 32px;
 }
 .post-it-note:after {
   content: "";
@@ -22,7 +23,7 @@
   right: 2em;
   border-width: 1em;
   border-style: solid;
-  border-color: #ffffe0;
+  border-color: #ffffd4;
 }
 .post-it-note:before {
   content: "";

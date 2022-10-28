@@ -220,48 +220,6 @@ function makeEditable(element) {
 }
 </script>
 
-<style>
-/* STYLING CALENDAR */
-#app
-  > div
-  > div.grid-item-calendar
-  > div
-  > div.dp__menu.dp__relative.dp__theme_light {
-  background-color: transparent;
-  flex-grow: 1;
-  margin: 10px 10px;
-}
-#app
-  > div
-  > div.grid-item-calendar
-  > div
-  > div.dp__menu.dp__relative.dp__theme_light
-  > div
-  > div
-  > div:nth-child(1)
-  > div
-  > div.dp__calendar
-  > div
-  > div
-  > div.dp__calendar_header {
-  width: 100%;
-}
-#app
-  > div
-  > div.grid-item-calendar
-  > div
-  > div.dp__menu.dp__relative.dp__theme_light
-  > div
-  > div
-  > div:nth-child(1)
-  > div
-  > div.dp__calendar
-  > div
-  > div
-  > div.dp__calendar {
-  width: 100%;
-}
-</style>
 <style scoped>
 * {
   font-family: "Kalam", cursive;
@@ -399,6 +357,10 @@ h1 {
   text-align: left;
   margin-left: 15px;
   flex: 1;
+}
+p {
+  margin-block-start: 6px;
+  margin-block-end: 6px;
 }
 
 .flex-id {

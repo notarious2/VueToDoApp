@@ -1,4 +1,5 @@
 <template>
+  <the-header></the-header>
   <h1>HOME PAGE</h1>
   <swiper
     :slidesPerView="1"

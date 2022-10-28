@@ -3,8 +3,10 @@
     <img src="../../assets/note.png" alt="" />
 
     <nav>
-      <h1><router-link to="/tasks"> to-do app </router-link></h1>
-      <h3 class="greetings">
+      <h1 class="app-name">
+        <router-link to="/tasks"> to-do app </router-link>
+      </h1>
+      <h3 class="greetings" v-if="helloUser">
         Hello <span>{{ helloUser }}!</span>
       </h3>
     </nav>
@@ -14,11 +16,26 @@
 
 <script setup>
 import { useAuthStore } from "../store/userAuth.js";
+import { ref, computed } from "vue";
 const authStore = useAuthStore();
-const helloUser = JSON.parse(localStorage.getItem("user")).username;
+
+const helloUser = ref("");
+
+const loggedIn = computed(() => authStore.isAuthenticated);
+
+console.log("logged", loggedIn.value);
+console.log("loggedA", authStore.isAuthenticated);
+
+console.log(localStorage.getItem("user"));
+
+// const helloUser = JSON.parse(localStorage.getItem("user")).username;
 </script>
 
 <style scoped>
+* {
+  font-family: "Kalam", cursive;
+}
+
 header {
   grid-area: header;
   margin-top: 2px;
@@ -82,5 +99,11 @@ header img {
 .button-74:active {
   box-shadow: #422800 2px 2px 0 0;
   transform: translate(2px, 2px);
+}
+
+@media only screen and (max-width: 460px) {
+  .greetings {
+    margin-left: 10px;
+  }
 }
 </style>
