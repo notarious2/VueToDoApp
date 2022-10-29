@@ -42,7 +42,7 @@ export const useAuthStore = defineStore("authentication", {
       await axios
         .post("user", payload)
         .then((response) => {
-          router.push({ path: "/auth" });
+          router.push({ path: "/login" });
           console.log(
             `User ${response.data.username} has been successfully created!`
           );
@@ -54,7 +54,6 @@ export const useAuthStore = defineStore("authentication", {
     logout() {
       this.token = null;
       localStorage.removeItem("user");
-      // router.push("/auth");
     },
 
     clearError() {
