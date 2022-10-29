@@ -34,7 +34,7 @@ export const useAuthStore = defineStore("authentication", {
           router.push({ path: "/tasks" });
         })
         .catch((error) => {
-          console.log(error.response);
+          console.log(error);
           this.errorLogIn = true;
         });
     },

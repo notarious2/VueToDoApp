@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import authHeader from "../services/auth-header";
-import router from "../../router.js";
 
 export const useTaskStore = defineStore("tasks", {
   state: () => ({
@@ -39,11 +38,7 @@ export const useTaskStore = defineStore("tasks", {
         console.log("Load...");
         return newArray;
       } catch (err) {
-        if (err.response.status === 401) {
-          localStorage.removeItem("user");
-          router.push({ name: "Authorization" });
-        }
-        console.log(err.response.status);
+        console.log(err);
       }
     },
     loadOneTask(task_date) {
@@ -80,10 +75,6 @@ export const useTaskStore = defineStore("tasks", {
         this.loadOneTask(this.date);
       } catch (err) {
         console.log(err);
-        if (err.response.status === 401) {
-          localStorage.removeItem("user");
-          router.push({ name: "Authorization" });
-        }
       }
     },
     // adding the task - Post Request
@@ -114,10 +105,6 @@ export const useTaskStore = defineStore("tasks", {
           //clear input field
           this.enteredText = "";
         } catch (err) {
-          if (err.response.status === 401) {
-            localStorage.removeItem("user");
-            router.push({ name: "Authorization" });
-          }
           console.log(err);
         }
       } else {
@@ -143,10 +130,6 @@ export const useTaskStore = defineStore("tasks", {
         this.loadOneTask(this.date);
       } catch (err) {
         console.log(err);
-        if (err.response.status === 401) {
-          localStorage.removeItem("user");
-          router.push({ name: "Authorization" });
-        }
       }
       this.updatePriority();
     },
@@ -176,12 +159,7 @@ export const useTaskStore = defineStore("tasks", {
           console.log("Multiple Rows Update!");
         } catch (err) {
           console.log(err);
-          if (err.response.status === 401) {
-            localStorage.removeItem("user");
-            router.push({ name: "Authorization" });
-          }
         }
-
         this.tasksList = await this.loadTasks();
         this.loadOneTask(this.date);
       }
@@ -203,10 +181,6 @@ export const useTaskStore = defineStore("tasks", {
           // get selected date's slice
           this.loadOneTask(this.date);
         } catch (err) {
-          if (err.response.status === 401) {
-            localStorage.removeItem("user");
-            router.push({ name: "Authorization" });
-          }
           console.log(err);
         }
       }

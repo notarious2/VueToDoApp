@@ -1,10 +1,7 @@
 import { createApp } from "vue";
 import App from "./App.vue";
-
 import router from "./router.js";
-
-import axios from "axios";
-
+import "./axios";
 import TheHeader from "../src/components/layout/TheHeader.vue";
 import TheFooter from "../src/components/layout/TheFooter.vue";
 
@@ -22,8 +19,6 @@ library.add(fab, fas, far);
 const app = createApp(App);
 
 const pinia = createPinia();
-
-axios.defaults.baseURL = "http://localhost:8000/";
 
 app.component("font-awesome-icon", FontAwesomeIcon);
 app.component("the-header", TheHeader);
