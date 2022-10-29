@@ -125,10 +125,11 @@ import PostIt from "../components/layout/PostIt.vue";
 
 import { storeToRefs } from "pinia";
 import { useTaskStore } from "../components/store/TaskStore";
+import { useAuthStore } from "../components/store/userAuth";
 
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
-
+const authStore = useAuthStore();
 const taskStore = useTaskStore();
 
 const {
@@ -159,8 +160,6 @@ if (tasksSlice.value.length > 0) {
 onMounted(async () => {
   tasksList.value = await taskStore.loadTasks();
   taskStore.loadOneTask(date.value);
-  // tasksList.value = await loadTasks();
-  // loadOneTask(date.value);
 });
 
 watch([tasksSlice], () => {

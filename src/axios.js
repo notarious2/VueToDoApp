@@ -11,7 +11,6 @@ axios.interceptors.response.use(
   (error) => {
     const status = error.response.status;
     if (status === 401) {
-      console.log("IT WORKED");
       const authStore = useAuthStore();
       authStore.logout();
     }

@@ -1,10 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import TheLogin from "./pages/TheLogin";
 import TheRegistration from "./pages/TheRegistration.vue";
-import TheTasks from "./pages/TheTasks.vue";
 import TheHome from "./pages/TheHome.vue";
-
-import { useAuthStore } from "../src/components/store/userAuth.js";
 
 const routes = [
   {
@@ -22,28 +19,11 @@ const routes = [
     name: "Registration",
     component: TheRegistration,
   },
-
-  {
-    path: "/tasks",
-    name: "Tasks",
-    component: TheTasks,
-    // beforeEnter: ifAuthenticated,
-    meta: { requiresAuth: true },
-  },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
-});
-
-router.beforeEach(async (to, from, next) => {
-  const authStore = useAuthStore();
-  if (to.meta.requiresAuth && !authStore.user && !authStore.isAuthenticated) {
-    next("/auth");
-  } else {
-    next();
-  }
 });
 
 export default router;

@@ -31,7 +31,7 @@ export const useAuthStore = defineStore("authentication", {
           localStorage.setItem("user", JSON.stringify(response.data));
           // update pinia state
           this.token = response.data["access_token"];
-          router.push({ path: "/tasks" });
+          router.push({ path: "/" });
         })
         .catch((error) => {
           console.log(error);
@@ -54,7 +54,7 @@ export const useAuthStore = defineStore("authentication", {
     logout() {
       this.token = null;
       localStorage.removeItem("user");
-      router.push("/auth");
+      // router.push("/auth");
     },
 
     clearError() {
