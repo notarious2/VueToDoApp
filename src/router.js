@@ -5,17 +5,17 @@ import TheHome from "./pages/TheHome.vue";
 
 const routes = [
   {
-    path: "/",
+    path: "VueToDoApp/",
     name: "Home",
     component: TheHome,
   },
   {
-    path: "/login",
+    path: "VueToDoApp/login",
     name: "Authorization",
     component: TheLogin,
   },
   {
-    path: "/register",
+    path: "VueToDoApp/register",
     name: "Registration",
     component: TheRegistration,
   },
