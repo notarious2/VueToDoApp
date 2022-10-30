@@ -31,7 +31,7 @@ export const useAuthStore = defineStore("authentication", {
           localStorage.setItem("user", JSON.stringify(response.data));
           // update pinia state
           this.token = response.data["access_token"];
-          router.push({ path: "/" });
+          router.push({ name: "Home" });
         })
         .catch((error) => {
           console.log(error);
@@ -42,7 +42,7 @@ export const useAuthStore = defineStore("authentication", {
       await axios
         .post("user", payload)
         .then((response) => {
-          router.push({ path: "/login" });
+          router.push({ name: "Authorization" });
           console.log(
             `User ${response.data.username} has been successfully created!`
           );
