@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useAuthStore } from "../src/components/store/userAuth.js";
 
-axios.defaults.baseURL = "http://localhost:8000/";
+axios.defaults.baseURL = "https://fastapi-todo-heroku.herokuapp.com/";
 
 axios.interceptors.response.use(
   //onFulfilled
