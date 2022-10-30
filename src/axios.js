@@ -1,5 +1,4 @@
 import axios from "axios";
-// window.axios = axios;
 import { useAuthStore } from "../src/components/store/userAuth.js";
 
 axios.defaults.baseURL = "http://localhost:8000/";

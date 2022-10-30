@@ -1,34 +1,57 @@
 <template>
   <the-header></the-header>
-  <h1>HOME PAGE</h1>
-  <swiper
-    :slidesPerView="1"
-    :spaceBetween="30"
-    :loop="true"
-    :centeredSlides="true"
-    :pagination="{
-      clickable: true,
-    }"
-    :autoplay="{
-      delay: 5000,
-      disableOnInteraction: false,
-    }"
-    :navigation="true"
-    :modules="modules"
-  >
-    <swiper-slide
-      ><img src="../assets/slide1.png" alt="slide 1"
-    /></swiper-slide>
-    <swiper-slide
-      ><img src="../assets/slide1.png" alt="slide 1"
-    /></swiper-slide>
-    <swiper-slide><img src="../assets/slide1.png" alt="slide 1" /></swiper-slide
-  ></swiper>
+  <main>
+    <h1>Welcome to the to-do list app</h1>
+    <h2>Simple, yet powerful task management application</h2>
+    <div class="swip">
+      <swiper
+        :slidesPerView="1"
+        :spaceBetween="30"
+        :loop="true"
+        :centeredSlides="true"
+        :pagination="{
+          clickable: true,
+        }"
+        :autoplay="{
+          delay: 5000,
+          disableOnInteraction: false,
+        }"
+        :navigation="true"
+        :modules="modules"
+      >
+        <swiper-slide
+          ><img src="../assets/tasks_slide_1.png" alt="slide 1" class="slide-1"
+        /></swiper-slide>
+        <swiper-slide class="swiper-2"
+          ><img src="../assets/tasks_slide_2.png" alt="slide 2" class="slide-2"
+        /></swiper-slide>
+        <swiper-slide
+          ><img
+            src="../assets/tasks_slide_3.png"
+            alt="slide 3"
+            class="slide-3" /></swiper-slide
+      ></swiper>
+      <post-it id="registration-form">
+        <div class="inner-registration-form">
+          <p><strong> Join for Free </strong></p>
+          <button
+            @click="router.push({ name: 'Registration' })"
+            class="button-74"
+          >
+            Register
+          </button>
+        </div>
+      </post-it>
+    </div>
+  </main>
+  <the-footer class="footer"></the-footer>
 </template>
 
 <script setup>
 import { ref } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
+import PostIt from "../components/layout/PostIt.vue";
+
 import SwiperCore, {
   Navigation,
   Pagination,
@@ -40,13 +63,72 @@ import SwiperCore, {
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import "swiper/css/autoplay";
+import { useRouter } from "vue-router";
+
 SwiperCore.use([Navigation, Pagination, Scrollbar, A11y, Autoplay]);
 const modules = ref([Navigation, Pagination, Scrollbar, A11y, Autoplay]);
+const router = useRouter();
 </script>
 
 <style scoped>
-img {
-  width: 300px;
+* {
+  font-family: "Kalam", cursive;
+}
+.slide-1 {
+  width: 90%;
+  height: 50%;
+}
+.slide-2 {
+  width: 70%;
+  height: 70%;
+}
+.slide-3 {
+  width: 50%;
+  height: 50%;
+}
+#registration-form {
+  display: flex;
+  width: 70%;
+  justify-content: center;
+  align-items: center;
+
+  padding: 0px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 3rem;
+}
+.inner-registration-form {
+  display: flex;
+  flex-direction: column;
+}
+main {
+  display: flex;
+  flex-direction: column;
+  min-height: 90vh;
+}
+.footer {
+  margin-top: auto;
+}
+.button-74 {
+  background-color: #fbeee0;
+  border: 2px solid #422800;
+  border-radius: 25px;
+  box-shadow: #422800 3px 3px 0 0;
+  color: #422800;
+  cursor: pointer;
+  font-weight: 300;
+  font-size: 16px;
+  padding: 3px 18px;
+  line-height: 20px;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  flex: 0;
+  flex-basis: 40px;
+  padding: 0px 20px;
 }
 </style>
 
