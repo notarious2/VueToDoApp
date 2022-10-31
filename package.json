@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "postinstall": "npm install express"
+    "postinstall": "npm run build",
+    "start": "node server.js"
   },
   "engines": {
     "node": "16.16.0"
