@@ -8,6 +8,9 @@
     "lint": "vue-cli-service lint",
     "postinstall": "npm install express"
   },
+  "engines": {
+    "node": "16.16.0"
+  },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.2.0",
     "@fortawesome/free-brands-svg-icons": "^6.2.0",
@@ -17,8 +20,10 @@
     "@vuepic/vue-datepicker": "^3.5.2",
     "axios": "^0.27.2",
     "core-js": "^3.8.3",
+    "express": "^4.18.2",
     "pinia": "^2.0.22",
     "pinia-plugin-persist": "^1.0.0",
+    "serve-static": "^1.15.0",
     "swiper": "^8.4.4",
     "vue": "^3.2.13",
     "vue-router": "^4.1.5",
