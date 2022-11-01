@@ -164,11 +164,6 @@ if (tasksSlice.value.length > 0) {
 onMounted(async () => {
   tasksList.value = await taskStore.loadTasks();
   taskStore.loadOneTask(date.value);
-  console.log("AUTHENTICATED Mount", authStore.isAuthenticated);
-});
-
-onUpdated(() => {
-  console.log("AUTHENTICATED Update", authStore.isAuthenticated);
 });
 
 watch([tasksSlice], () => {

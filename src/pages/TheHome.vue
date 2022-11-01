@@ -12,5 +12,8 @@ import TheDashboard from "./TheDashboard.vue";
 import TheTasks from "./TheTasks.vue";
 import { useAuthStore } from "../components/store/userAuth";
 const authStore = useAuthStore();
-console.log(authStore.isAuthenticated);
+
+if (localStorage.getItem("user")) {
+  authStore.isAuthenticated = true;
+}
 </script>

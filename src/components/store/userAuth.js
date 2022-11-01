@@ -10,10 +10,6 @@ export const useAuthStore = defineStore("authentication", {
     errorLogIn: false,
     isAuthenticated: false,
   }),
-
-  // getters: {
-  //   isAuthenticated: (state) => !!state.token,
-  // },
   actions: {
     async login(username, password) {
       const params = new URLSearchParams();
@@ -57,6 +53,8 @@ export const useAuthStore = defineStore("authentication", {
     logout() {
       this.token = null;
       localStorage.removeItem("user");
+      this.isAuthenticated = false;
+      location.reload();
     },
 
     clearError() {
