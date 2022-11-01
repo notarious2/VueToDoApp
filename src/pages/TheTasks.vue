@@ -120,7 +120,7 @@
 <script setup>
 /* eslint-disable */
 // eslint-disable-next-line
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, onUpdated, watch } from "vue";
 import draggable from "vuedraggable";
 import PostIt from "../components/layout/PostIt.vue";
 
@@ -164,10 +164,11 @@ if (tasksSlice.value.length > 0) {
 onMounted(async () => {
   tasksList.value = await taskStore.loadTasks();
   taskStore.loadOneTask(date.value);
+  console.log("AUTHENTICATED Mount", authStore.isAuthenticated);
 });
 
-watch([isLoading], () => {
-  console.log(isLoading.value);
+onUpdated(() => {
+  console.log("AUTHENTICATED Update", authStore.isAuthenticated);
 });
 
 watch([tasksSlice], () => {
