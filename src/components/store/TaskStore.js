@@ -11,9 +11,11 @@ export const useTaskStore = defineStore("tasks", {
     enteredText: "",
     editedText: "",
     invalidInput: false,
+    isLoading: false,
   }),
   actions: {
     async loadTasks() {
+      this.isLoading = true;
       try {
         const response = await axios.get("task", {
           headers: authHeader(),
@@ -35,6 +37,7 @@ export const useTaskStore = defineStore("tasks", {
           }
         });
         // tasksList.value = newArray;
+        this.isLoading = false;
         console.log("Load...");
         return newArray;
       } catch (err) {

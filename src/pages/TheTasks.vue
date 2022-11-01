@@ -85,6 +85,7 @@
           />
           <button class="button-74">add task</button>
         </form>
+        <the-spinner v-if="isLoading"></the-spinner>
         <span v-if="invalidInput" class="invalid-input">Please Enter Text</span>
       </post-it>
     </div>
@@ -123,6 +124,8 @@ import { ref, onMounted, watch } from "vue";
 import draggable from "vuedraggable";
 import PostIt from "../components/layout/PostIt.vue";
 
+import TheSpinner from "@/components/layout/TheSpinner.vue";
+
 import { storeToRefs } from "pinia";
 import { useTaskStore } from "../components/store/TaskStore";
 import { useAuthStore } from "../components/store/userAuth";
@@ -140,6 +143,7 @@ const {
   invalidInput,
   enteredText,
   editedText,
+  isLoading,
 } = storeToRefs(taskStore);
 
 // const editedText = ref("");
@@ -160,6 +164,10 @@ if (tasksSlice.value.length > 0) {
 onMounted(async () => {
   tasksList.value = await taskStore.loadTasks();
   taskStore.loadOneTask(date.value);
+});
+
+watch([isLoading], () => {
+  console.log(isLoading.value);
 });
 
 watch([tasksSlice], () => {
