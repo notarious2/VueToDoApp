@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
-import TheLogin from "./pages/TheLogin";
-import TheRegistration from "./pages/TheRegistration.vue";
-import TheHome from "./pages/TheHome.vue";
+
+const TheHome = () => import("./pages/TheHome.vue");
+const TheLogin = () => import("./pages/TheLogin");
+const TheRegistration = () => import("./pages/TheRegistration.vue");
 
 const routes = [
   {
