@@ -4,7 +4,7 @@
 
     <nav>
       <h1 class="app-name">
-        <router-link to="/"> to-do app </router-link>
+        <router-link :to="{ name: 'Home' }"> to-do app </router-link>
       </h1>
       <h3 class="greetings" v-if="loggedIn">
         Hello <span>{{ helloUser }}!</span>
