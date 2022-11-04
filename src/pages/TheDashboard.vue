@@ -20,16 +20,25 @@
         :modules="modules"
       >
         <swiper-slide
-          ><img src="../assets/tasks_slide_1.png" alt="slide 1" class="slide-1"
+          ><img
+            :src="require('../assets/tasks_slide_1.webp')"
+            alt="slide 1"
+            class="slide-1"
+            rel="preload"
         /></swiper-slide>
         <swiper-slide class="swiper-2"
-          ><img src="../assets/tasks_slide_2.png" alt="slide 2" class="slide-2"
+          ><img
+            :src="require('../assets/tasks_slide_2.webp')"
+            alt="slide 2"
+            class="slide-2"
+            rel="preload"
         /></swiper-slide>
         <swiper-slide
           ><img
-            src="../assets/tasks_slide_3.png"
+            :src="require('../assets/tasks_slide_3.webp')"
             alt="slide 3"
-            class="slide-3" /></swiper-slide
+            class="slide-3"
+            rel="preload" /></swiper-slide
       ></swiper>
       <post-it id="registration-form">
         <div class="inner-registration-form">
