@@ -7,7 +7,7 @@
 <style scoped>
 .post-it-note {
   margin: 20px 0px 0px 10px;
-  padding: 2em;
+  padding: 1em;
   background: #ffffd4;
   position: relative;
   min-height: 10em;

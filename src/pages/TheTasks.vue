@@ -49,27 +49,25 @@
                 </p>
               </div>
               <div class="flex-buttons">
-                <font-awesome-icon
-                  icon="fas fa-pen"
-                  class="edit-icon"
-                  :class="{ editSelected: element.editable }"
+                <img
+                  src="@/assets/tasks/edit.png"
+                  class="edit-img"
+                  v-show="showButtons === element.priority"
                   @click="makeEditable(element)"
-                  v-show="showButtons === element.priority"
+                  :class="{ editSelected: element.editable }"
                 />
-                <font-awesome-icon
+                <img
+                  src="@/assets/tasks/delete.png"
+                  alt="delete-image"
+                  class="delete-img"
                   @click="taskStore.deleteTask(element)"
-                  icon="fas
-              fa-trash"
-                  class="delete-icon"
                   v-show="showButtons === element.priority"
                 />
-                <font-awesome-icon
-                  icon="fas fa-check"
-                  class="check-icon"
-                  :class="{ isChecked: element.completed }"
-                  :id="element.id"
-                  v-model="element.completed"
+                <img
                   @click="taskStore.checkUncheck(element)"
+                  :src="element.completed ? urls[0] : urls[1]"
+                  alt="status"
+                  class="status-img"
                 />
               </div>
             </div>
@@ -118,9 +116,7 @@
 </template>
 
 <script setup>
-/* eslint-disable */
-// eslint-disable-next-line
-import { ref, onMounted, onUpdated, watch } from "vue";
+import { ref, onMounted, watch } from "vue";
 import draggable from "vuedraggable";
 import PostIt from "../components/layout/PostIt.vue";
 
@@ -132,6 +128,7 @@ import { useAuthStore } from "../components/store/userAuth";
 
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
+// eslint-disable-next-line
 const authStore = useAuthStore();
 const taskStore = useTaskStore();
 
@@ -221,6 +218,12 @@ function makeEditable(element) {
     }
   });
 }
+
+// WORKING WITH IMAGES
+const urls = ref([
+  require("@/assets/tasks/checked_box.png"),
+  require("@/assets/tasks/uncheck.png"),
+]);
 </script>
 
 <style scoped>
@@ -350,20 +353,7 @@ h1 {
 .flexbox {
   display: flex;
   justify-content: space-between;
-  margin-left: 10px;
-  margin-right: 10px;
-  gap: 5px;
-  margin-top: 0px;
-}
-.flex-text {
-  /* background: lightgray; */
-  text-align: left;
-  margin-left: 15px;
-  flex: 1;
-}
-p {
-  margin-block-start: 6px;
-  margin-block-end: 6px;
+  margin: 0 10px;
 }
 
 .flex-id {
@@ -371,9 +361,23 @@ p {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 3px;
 }
 .flex-id p {
   font-weight: bold;
+  margin-block-start: 0px;
+  margin-block-end: 0px;
+}
+.flex-text {
+  /* background: lightgray; */
+  text-align: justify;
+  margin-left: 15px;
+  flex: 1;
+  line-height: 12pt;
+}
+p {
+  margin-block-start: 10px;
+  margin-block-end: 0px;
 }
 
 /* Change border of the text if edit is selected*/
@@ -387,41 +391,33 @@ p {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 5px;
+  padding: 3px;
 }
 
-.edit-icon,
-.delete-icon {
-  font-size: 18px;
-  margin-right: 5px;
+/* EDIT */
+.edit-img {
+  width: 30px;
+  height: 30px;
+  margin-right: -5px;
 }
-.edit-icon:hover {
-  color: #c36241;
+.editSelected {
+  transform: rotate(19deg);
 }
-
-.delete-icon:hover {
-  color: #9b4848;
+/* DELETE */
+.delete-img {
+  width: 30px;
+  height: 30px;
 }
-
+.delete-img:hover {
+  filter: invert(39%) sepia(5%) saturate(4834%) hue-rotate(314deg)
+    brightness(91%) contrast(100%);
+}
 /* CHECKBOX */
-.check-icon {
+.status-img {
+  width: 30px;
+  height: 30px;
   margin-left: auto;
   margin-right: 5px;
-  color: #b04b4b;
-  font-size: 26px;
-}
-.check-icon:hover {
-  filter: brightness(75%);
-}
-/* Make pen green if edit is selected*/
-
-.editSelected {
-  color: #c36241;
-  margin-top: 5px;
-}
-
-.isChecked {
-  color: green;
 }
 
 /* BUTTON */
