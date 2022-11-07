@@ -15,7 +15,7 @@
         }"
         :autoplay="{
           delay: 5000,
-          disableOnInteraction: false,
+          // disableOnInteraction: false,
         }"
         :navigation="true"
         :modules="modules"
@@ -27,11 +27,11 @@
             class="slide-1 swiper-lazy"
             rel="preload"
         /></swiper-slide>
-        <swiper-slide class="swiper-2 swiper-lazy"
+        <swiper-slide
           ><img
             :src="require('../assets/tasks_slide_2.webp')"
             alt="slide 2"
-            class="slide-2"
+            class="slide-2 swiper-lazy"
             rel="preload"
         /></swiper-slide>
         <swiper-slide
@@ -99,6 +99,7 @@ const router = useRouter();
 .slide-3 {
   width: 50%;
   height: 50%;
+  margin-bottom: 15px;
 }
 #registration-form {
   display: flex;
@@ -151,5 +152,11 @@ main {
   color: lightsalmon;
   height: 0px;
   width: 15px;
+}
+</style>
+
+<style>
+.swiper-pagination-bullet {
+  margin-right: 5px !important;
 }
 </style>

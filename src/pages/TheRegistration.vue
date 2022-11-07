@@ -1,71 +1,82 @@
 <template>
-  <div class="container">
-    <div class="post-it">
-      <form @submit.prevent="submitRegistrationDetails">
-        <div class="container">
-          <h1>Register</h1>
-          <div class="icon-div">
-            <font-awesome-icon icon="fas fa-user" class="fa-icons" />
-            <input type="text" placeholder="Name" required v-model="name" />
-          </div>
-          <div class="icon-div">
-            <font-awesome-icon icon="far fa-envelope" class="fa-icons" />
-            <input type="text" placeholder="Email" required v-model="email" />
-          </div>
-          <div class="icon-div">
-            <font-awesome-icon icon="far fa-user" class="fa-icons" />
-            <input
-              type="text"
-              placeholder="Username"
-              required
-              v-model="username"
-            />
-          </div>
-          <div class="icon-div">
-            <font-awesome-icon icon="fas fa-key" class="fa-icons" />
-            <input
-              id="inline-input"
-              :type="passwordType"
-              placeholder="Password"
-              v-model="password"
-              required
-            />
-            <a id="icon" @click="toggleShow">
-              <font-awesome-icon
-                v-if="showPassword"
-                :icon="['fas', 'fa-eye']"
-              />
-              <font-awesome-icon v-else :icon="['fas', 'fa-eye-slash']" />
-            </a>
-          </div>
-          <div class="icon-div">
-            <font-awesome-icon
-              id="password-confirmation"
-              icon="fas fa-unlock"
-              class="fa-icons"
-              :class="
-                passwordsMatch
-                  ? 'password-is-confirmed'
-                  : 'password-not-confirmed'
-              "
-            />
-            <input
-              :type="passwordType"
-              placeholder="Verify Password"
-              v-model="passwordConfirmation"
-              required
-            />
-          </div>
-          <button class="button-74" type="submit">Register</button>
+  <PostIt class="post-it">
+    <form @submit.prevent="submitRegistrationDetails">
+      <div class="container">
+        <h1>Register</h1>
+        <div class="icon-div">
+          <img src="@/assets/register/user.png" alt="user" class="user-img" />
+          <input type="text" placeholder="Name" required v-model="name" />
         </div>
-      </form>
-    </div>
-  </div>
+        <div class="icon-div">
+          <img
+            src="@/assets/register/email.png"
+            alt="email"
+            class="email-img"
+          />
+          <input type="text" placeholder="Email" required v-model="email" />
+        </div>
+        <div class="icon-div">
+          <img
+            src="@/assets/register/username.png"
+            alt="username"
+            class="username-img"
+          />
+          <input
+            type="text"
+            placeholder="Username"
+            required
+            v-model="username"
+          />
+        </div>
+        <div class="icon-div">
+          <img
+            src="@/assets/register/password.png"
+            alt="password"
+            class="password-img"
+          />
+          <input
+            id="inline-input"
+            :type="passwordType"
+            placeholder="Password"
+            v-model="password"
+            required
+          />
+          <img
+            :src="showPassword ? showUrls[0] : showUrls[1]"
+            alt="show-password"
+            class="show-password-img"
+            @click="toggleShow"
+          />
+        </div>
+        <div class="icon-div">
+          <img
+            alt="password-verification"
+            class="verification-img"
+            :src="passwordsMatch ? passwordUrls[1] : passwordUrls[0]"
+            :class="
+              passwordsMatch
+                ? 'password-is-confirmed'
+                : 'password-not-confirmed'
+            "
+          />
+          <input
+            :type="passwordType"
+            placeholder="Verify Password"
+            v-model="passwordConfirmation"
+            required
+          />
+        </div>
+        <button class="button-74" type="submit">Submit</button>
+      </div>
+    </form>
+  </PostIt>
 </template>
 
 <script setup>
 import { ref, watch } from "vue";
 import { useAuthStore } from "../components/store/userAuth.js";
+import PostIt from "../components/layout/PostIt.vue";
+
 const authStore = useAuthStore();
 
 const name = ref("");
@@ -73,9 +84,18 @@ const email = ref("");
 const username = ref("");
 const password = ref("");
 const passwordConfirmation = ref("");
-const showPassword = ref("");
+const showPassword = ref(false);
 const passwordType = ref("password");
 const passwordsMatch = ref(false);
+
+const passwordUrls = ref([
+  require("@/assets/register/locked.png"),
+  require("@/assets/register/unlocked.png"),
+]);
+const showUrls = ref([
+  require("@/assets/register/eyes.png"),
+  require("@/assets/register/closed_eyes.png"),
+]);
 
 function toggleShow() {
   showPassword.value = !showPassword.value;
@@ -109,16 +129,31 @@ watch([password, passwordConfirmation], () => {
   font-family: "Kalam", cursive;
 }
 
-.password-is-confirmed {
-  color: green;
+.user-img,
+.email-img,
+.username-img {
+  width: 25px;
+  height: 25px;
 }
-.password-not-confirmed {
-  color: red;
+.password-img,
+.verification-img {
+  width: 20px;
+  height: 20px;
+  margin-left: 2px;
+}
+.show-password-img {
+  width: 25px;
+  height: 25px;
+  margin-right: 3px;
 }
 
-.container {
-  width: 200px;
-  margin: 50px auto;
+.password-is-confirmed {
+  filter: invert(50%) sepia(31%) saturate(1012%) hue-rotate(60deg)
+    brightness(98%) contrast(87%);
+}
+.password-not-confirmed {
+  filter: invert(14%) sepia(67%) saturate(5511%) hue-rotate(356deg)
+    brightness(86%) contrast(98%);
 }
 
 #icon {
@@ -145,7 +180,7 @@ watch([password, passwordConfirmation], () => {
   border: none;
   background: none;
   font-size: 1em;
-  padding: 0.5em;
+  padding: 0.3em;
   color: inherit;
   flex: auto 1 1;
   width: 100%;
@@ -154,29 +189,11 @@ watch([password, passwordConfirmation], () => {
 }
 
 .post-it {
-  background: #fefabc;
-  padding: 30px;
-  font-family: "Gloria Hallelujah", cursive;
   font-size: 15px;
-  color: #000;
   width: 200px;
   position: relative;
-  /* border-bottom-right-radius: 40px; */
-  box-shadow: 0px 4px 6px #333;
-  -moz-box-shadow: 0px 4px 6px #333;
-  -webkit-box-shadow: 0px 4px 6px #333;
-  border-radius: 5px;
-  border-bottom-right-radius: 30px;
-}
-.post-it::after {
-  content: "";
-  display: inline-block;
-  position: absolute;
-  width: 2.13em;
-  height: 2.13em;
-  bottom: 0;
-  right: 0;
-  background: linear-gradient(-45deg, transparent 1.1em, #e3d842) bottom right;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .button-74 {

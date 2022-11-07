@@ -1,58 +1,59 @@
 <template>
-  <div class="container">
-    <div class="post-it">
-      <form @submit.prevent="submitLogDetails">
-        <div class="container">
-          <h1>Login</h1>
-          <div class="icon-div">
-            <!-- <label for="uname">Username</label> -->
-            <font-awesome-icon icon="far fa-user" class="fa-icons" />
-            <input
-              type="text"
-              placeholder="Username"
-              name="uname"
-              required
-              v-model="username"
-              @blur="authStore.clearError()"
-            />
-          </div>
-          <div class="icon-div">
-            <!-- <label for="psw">Password</label> -->
-            <font-awesome-icon icon="fas fa-key" class="fa-icons" />
+  <PostIt class="post-it">
+    <form @submit.prevent="submitLogDetails">
+      <h1>Login</h1>
+      <div class="icon-div">
+        <img src="@/assets/register/user.png" alt="user" class="user-img" />
+        <input
+          type="text"
+          placeholder="Username"
+          name="uname"
+          required
+          v-model="username"
+          @blur="authStore.clearError()"
+        />
+      </div>
+      <div class="icon-div">
+        <img
+          src="@/assets/register/password.png"
+          alt="password"
+          class="password-img"
+        />
 
-            <input
-              id="inline-input"
-              :type="passwordType"
-              placeholder="Password"
-              name="psw"
-              required
-              v-model="password"
-              @blur="authStore.clearError()"
-            />
-            <a id="icon" @click="toggleShow">
-              <font-awesome-icon
-                v-if="showPassword"
-                :icon="['fas', 'fa-eye']"
-              />
-              <font-awesome-icon v-else :icon="['fas', 'fa-eye-slash']" />
-            </a>
-          </div>
-          <button class="button-74" type="submit">Login</button>
-        </div>
-        <span id="error-message" v-if="authStore.errorLogIn">
-          Incorrect Email or Password
-        </span>
-      </form>
-    </div>
-  </div>
+        <input
+          id="inline-input"
+          :type="passwordType"
+          placeholder="Password"
+          name="psw"
+          required
+          v-model="password"
+          @blur="authStore.clearError()"
+        />
+        <img
+          :src="showPassword ? showUrls[0] : showUrls[1]"
+          alt="show-password"
+          class="show-password-img"
+          @click="toggleShow"
+        />
+      </div>
+      <button class="button-74" type="submit">Submit</button>
+      <span id="error-message" v-if="authStore.errorLogIn">
+        Incorrect Email or Password
+      </span>
+    </form>
+  </PostIt>
 </template>
 
 <script setup>
 import { ref } from "vue";
 import { useAuthStore } from "../components/store/userAuth.js";
+import PostIt from "../components/layout/PostIt.vue";
 
 const authStore = useAuthStore();
-
+const showUrls = ref([
+  require("@/assets/register/eyes.png"),
+  require("@/assets/register/closed_eyes.png"),
+]);
 const username = ref("");
 const password = ref("");
 const showPassword = ref(false);
@@ -76,10 +77,30 @@ function submitLogDetails() {
   font-family: "Kalam", cursive;
 }
 
-.container {
+.post-it {
+  font-size: 15px;
   width: 200px;
-  margin: 50px auto;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  padding-top: 50px;
+  padding-bottom: 50px;
 }
+.user-img {
+  width: 25px;
+  height: 25px;
+}
+.password-img {
+  width: 20px;
+  height: 20px;
+  margin-left: 3px;
+}
+.show-password-img {
+  width: 25px;
+  height: 25px;
+  margin-right: 3px;
+}
+
 #error-message {
   color: red;
   font-weight: bold;
@@ -116,32 +137,6 @@ function submitLogDetails() {
   width: 100%;
   background: none;
   background-color: transparent;
-}
-
-.post-it {
-  background: #fefabc;
-  padding: 30px;
-  font-family: "Gloria Hallelujah", cursive;
-  font-size: 15px;
-  color: #000;
-  width: 200px;
-  position: relative;
-  /* border-bottom-right-radius: 40px; */
-  box-shadow: 0px 4px 6px #333;
-  -moz-box-shadow: 0px 4px 6px #333;
-  -webkit-box-shadow: 0px 4px 6px #333;
-  border-radius: 5px;
-  border-bottom-right-radius: 30px;
-}
-.post-it::after {
-  content: "";
-  display: inline-block;
-  position: absolute;
-  width: 2.13em;
-  height: 2.13em;
-  bottom: 0;
-  right: 0;
-  background: linear-gradient(-45deg, transparent 1.1em, #e3d842) bottom right;
 }
 
 .button-74 {
