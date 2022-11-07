@@ -8,6 +8,7 @@
         :slidesPerView="1"
         :spaceBetween="30"
         :loop="true"
+        :lazy="true"
         :centeredSlides="true"
         :pagination="{
           clickable: true,
@@ -23,10 +24,10 @@
           ><img
             :src="require('../assets/tasks_slide_1.webp')"
             alt="slide 1"
-            class="slide-1"
+            class="slide-1 swiper-lazy"
             rel="preload"
         /></swiper-slide>
-        <swiper-slide class="swiper-2"
+        <swiper-slide class="swiper-2 swiper-lazy"
           ><img
             :src="require('../assets/tasks_slide_2.webp')"
             alt="slide 2"
@@ -37,7 +38,7 @@
           ><img
             :src="require('../assets/tasks_slide_3.webp')"
             alt="slide 3"
-            class="slide-3"
+            class="slide-3 swiper-lazy"
             rel="preload" /></swiper-slide
       ></swiper>
       <post-it id="registration-form">
@@ -67,16 +68,19 @@ import SwiperCore, {
   Scrollbar,
   A11y,
   Autoplay,
+  Lazy,
 } from "swiper";
 
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/autoplay";
+import "swiper/css/lazy";
+
 import { useRouter } from "vue-router";
 
-SwiperCore.use([Navigation, Pagination, Scrollbar, A11y, Autoplay]);
-const modules = ref([Navigation, Pagination, Scrollbar, A11y, Autoplay]);
+SwiperCore.use([Navigation, Pagination, Scrollbar, A11y, Autoplay, Lazy]);
+const modules = ref([Navigation, Pagination, Scrollbar, A11y, Autoplay, Lazy]);
 const router = useRouter();
 </script>
 
