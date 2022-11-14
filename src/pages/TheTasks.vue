@@ -4,7 +4,7 @@
     <div class="grid-item-todo">
       <post-it>
         <div
-          v-if="!display"
+          v-if="!display && !isLoading"
           class="no-tasks"
           style="display: flex; flex-direction: column"
         >

@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import router from "../../router.js";
+import refreshHeader from "../services/refresh-header";
+// import authHeader from "../services/auth-header";
 
 export const useAuthStore = defineStore("authentication", {
   state: () => ({
@@ -55,6 +57,19 @@ export const useAuthStore = defineStore("authentication", {
       localStorage.removeItem("user");
       this.isAuthenticated = false;
       location.reload();
+    },
+
+    async refreshToken() {
+      const refreshToken = await axios.get("refresh", {
+        headers: refreshHeader(),
+      });
+      var existing = localStorage.getItem("user");
+      existing = JSON.parse(existing);
+      console.log(existing.access_token);
+      existing["access_token"] = refreshToken.data.access_token;
+      console.log("REFRESHING!", refreshToken.data.access_token);
+      localStorage.setItem("user", JSON.stringify(existing));
+      return refreshToken.data.access_token;
     },
 
     clearError() {
