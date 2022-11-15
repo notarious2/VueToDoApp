@@ -4,8 +4,7 @@ import { useAuthStore } from "../src/components/store/userAuth.js";
 
 // axios.defaults.baseURL = "https://fastapi-todo-heroku.herokuapp.com/";
 // axios.defaults.baseURL = "http://127.0.0.1:8000/";
-axios.defaults.baseURL =
-  "postgresql://postgres:9QwHEVTfq137WwSOwYVY@containers-us-west-127.railway.app:5681/railway";
+axios.defaults.baseURL = "https://web-production-b464.up.railway.app/";
 
 //response interceptor
 axios.interceptors.response.use(
@@ -13,6 +12,7 @@ axios.interceptors.response.use(
     return res;
   },
   async function (error) {
+    console.log(error);
     const originalRequest = error.config;
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
