@@ -3,7 +3,9 @@ import { useAuthStore } from "../src/components/store/userAuth.js";
 // import authHeader from "../src/components/services/auth-header";
 
 // axios.defaults.baseURL = "https://fastapi-todo-heroku.herokuapp.com/";
-axios.defaults.baseURL = "http://127.0.0.1:8000/";
+// axios.defaults.baseURL = "http://127.0.0.1:8000/";
+axios.defaults.baseURL =
+  "postgresql://postgres:9QwHEVTfq137WwSOwYVY@containers-us-west-127.railway.app:5681/railway";
 
 //response interceptor
 axios.interceptors.response.use(
