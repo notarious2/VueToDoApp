@@ -41,7 +41,12 @@ export const useAuthStore = defineStore("authentication", {
     },
     async register(payload) {
       await axios
-        .post("user", payload)
+        .post("user", payload, {
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        })
         .then((response) => {
           router.push({ name: "Authorization" });
           console.log(

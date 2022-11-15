@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useAuthStore } from "../src/components/store/userAuth.js";
-import authHeader from "../src/components/services/auth-header";
+// import authHeader from "../src/components/services/auth-header";
 
 // axios.defaults.baseURL = "https://fastapi-todo-heroku.herokuapp.com/";
 
@@ -12,8 +12,7 @@ axios.interceptors.response.use(
     return res;
   },
   async function (error) {
-    console.log("HERE!");
-    console.log(authHeader());
+    console.log("HERE!", error.response.status);
     const originalRequest = error.config;
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
