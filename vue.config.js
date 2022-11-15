@@ -4,6 +4,10 @@
 //   transpileDependencies: true,
 // });
 
+// module.exports = {
+//   publicPath: process.env.NODE_ENV === "production" ? "/VueToDoApp/" : "/",
+// };
+
 module.exports = {
-  publicPath: process.env.NODE_ENV === "production" ? "/VueToDoApp/" : "/",
+  publicPath: "",
 };

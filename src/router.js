@@ -6,20 +6,20 @@ const TheRegistration = () => import("./pages/TheRegistration.vue");
 
 const routes = [
   {
-    path: "/VueToDoApp/",
-    // path: "/",
+    // path: "/VueToDoApp/",
+    path: "/",
     name: "Home",
     component: TheHome,
   },
   {
-    path: "/VueToDoApp/login",
-    // path: "/login",
+    // path: "/VueToDoApp/login",
+    path: "/login",
     name: "Authorization",
     component: TheLogin,
   },
   {
-    path: "/VueToDoApp/register",
-    // path: "/register",
+    // path: "/VueToDoApp/register",
+    path: "/register",
     name: "Registration",
     component: TheRegistration,
   },
