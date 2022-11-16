@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from "vue-router";
 const TheHome = () => import("./pages/TheHome.vue");
 const TheLogin = () => import("./pages/TheLogin");
 const TheRegistration = () => import("./pages/TheRegistration.vue");
+const NotFound = () => import("./pages/NotFound.vue");
 
 const routes = [
   {
@@ -23,6 +24,7 @@ const routes = [
     name: "Registration",
     component: TheRegistration,
   },
+  { path: "/:notFound(.*)", component: NotFound },
 ];
 
 const router = createRouter({
