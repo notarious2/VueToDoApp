@@ -37,9 +37,9 @@
         />
       </div>
       <button class="button-74" type="submit">Submit</button>
-      <span id="error-message" v-if="authStore.errorLogIn">
+      <div id="error-message" v-if="authStore.errorLogIn">
         Incorrect Email or Password
-      </span>
+      </div>
     </form>
   </PostIt>
 </template>
@@ -104,7 +104,7 @@ function submitLogDetails() {
 #error-message {
   color: red;
   font-weight: bold;
-  margin-top: 0px;
+  margin-top: 10px;
 }
 
 #icon {
