@@ -6,8 +6,12 @@ import { useAuthStore } from "../src/components/store/userAuth.js";
 // axios.defaults.baseURL = "http://127.0.0.1:8000/";
 axios.defaults.baseURL = "https://web-production-b464.up.railway.app/";
 
+// axios interceptor for specific URL - instance
+var instance = axios.create({
+  baseURL: "https://web-production-b464.up.railway.app/",
+});
 //response interceptor
-axios.interceptors.response.use(
+instance.interceptors.response.use(
   (res) => {
     return res;
   },
