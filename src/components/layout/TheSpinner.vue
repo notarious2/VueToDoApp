@@ -5,11 +5,12 @@
 <style scoped>
 #loading {
   display: inline-block;
-  width: 30px;
-  height: 30px;
-  position: absolute;
+  width: 35px;
+  height: 35px;
+  position: relative;
   margin-left: auto;
   margin-right: auto;
+  margin-top: 30px;
   left: 0;
   right: 0;
   bottom: 1px;

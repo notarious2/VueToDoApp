@@ -8,12 +8,20 @@
           class="no-tasks"
           style="display: flex; flex-direction: column"
         >
-          <div>{{ formatDate(new Date(date)) }}</div>
+          <div>
+            {{ formatDate(new Date(date)) }}
+          </div>
           <h2>No Tasks to Display</h2>
         </div>
 
         <div v-else>
-          <h1>{{ formatDate(new Date(tasksSlice.date)) }}</h1>
+          <h1 class="unselectable">
+            {{
+              formatDate(new Date(tasksSlice.date)) !== "Invalid Date"
+                ? formatDate(new Date(tasksSlice.date))
+                : ""
+            }}
+          </h1>
           <div class="flex-headers">
             <div class="header-number">#</div>
             <div class="header-text">Description</div>
@@ -28,17 +36,14 @@
           @change="taskStore.updatePriority"
         >
           <template #item="{ element }">
-            <div
-              class="flexbox"
-              @mouseover="showButtons = element.priority"
-              @mouseout="showButtons = null"
-            >
+            <div class="flexbox">
               <div class="flex-id">
                 <p>{{ element.priority }}</p>
               </div>
               <div
                 class="flex-text"
                 :class="{ editSelectedBorder: element.editable }"
+                @dblclick="taskStore.checkUncheck(element)"
               >
                 <p
                   :contenteditable="element.editable"
@@ -48,7 +53,11 @@
                   {{ element.text }}
                 </p>
               </div>
-              <div class="flex-buttons">
+              <div
+                class="flex-buttons"
+                @mouseover="showButtons = element.priority"
+                @mouseout="showButtons = null"
+              >
                 <img
                   src="@/assets/tasks/edit.png"
                   class="edit-img"
@@ -73,20 +82,27 @@
             </div>
           </template>
         </draggable>
-        <form class="form-control" @submit.prevent="taskStore.addNewTask">
-          <input
-            class="task-input"
-            @blur="taskStore.clearInvalidInput"
-            @keyup="taskStore.clearInvalidInput"
-            v-model="enteredText"
-            type="text"
-          />
-          <button class="button-74">add task</button>
-        </form>
-        <the-spinner v-if="isLoading"></the-spinner>
+        <div>
+          <form
+            class="form-control"
+            @submit.prevent="taskStore.addNewTask"
+            v-if="!isLoading"
+          >
+            <input
+              class="task-input"
+              @blur="taskStore.clearInvalidInput"
+              @keyup="taskStore.clearInvalidInput"
+              v-model="enteredText"
+              type="text"
+            />
+            <button class="button-74">add task</button>
+          </form>
+          <the-spinner v-else></the-spinner>
+        </div>
         <span v-if="invalidInput" class="invalid-input">Please Enter Text</span>
       </post-it>
     </div>
+
     <div class="grid-item-calendar">
       <h1>{{ date }}</h1>
       <Datepicker
@@ -234,6 +250,15 @@ const urls = ref([
 h1 {
   text-align: center;
 }
+.unselectable {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
 
 .form-control {
   margin-top: 20px;
@@ -354,6 +379,7 @@ h1 {
   display: flex;
   justify-content: space-between;
   margin: 0 10px;
+  cursor: default;
 }
 
 .flex-id {
@@ -384,6 +410,7 @@ p {
 
 .editSelectedBorder {
   border: 0.5px solid orange;
+  cursor: auto;
 }
 .flex-buttons {
   /* background: lightyellow; */
