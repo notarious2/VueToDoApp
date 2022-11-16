@@ -25,7 +25,6 @@ axios.interceptors.response.use(
       await authStore.refreshToken();
       // const access_token = await authStore.refreshToken();
       // axios.defaults.headers.common["Authorization"] = "Bearer " + access_token;
-      location.reload();
       return [null, await axios.request(originalRequest)];
     }
     return Promise.reject(error);
