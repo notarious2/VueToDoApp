@@ -1,14 +1,10 @@
 <template>
   <header>
     <img src="../../assets/note.png" alt="" />
-
     <nav>
       <h1 class="app-name">
         <router-link :to="{ name: 'Home' }"> to-do app </router-link>
       </h1>
-      <h3 class="greetings" v-if="loggedIn">
-        Hello <span>{{ helloUser }}!</span>
-      </h3>
     </nav>
     <button
       v-if="!loggedIn"
@@ -37,14 +33,6 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const authStore = useAuthStore();
 const loggedIn = computed(() => authStore.isAuthenticated);
-
-const helloUser = computed(() => {
-  if (loggedIn.value && JSON.parse(localStorage.getItem("user")) !== null) {
-    return JSON.parse(localStorage.getItem("user")).username;
-  } else {
-    return false;
-  }
-});
 </script>
 
 <style scoped>
