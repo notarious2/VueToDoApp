@@ -32,6 +32,27 @@ instance.interceptors.response.use(
   }
 );
 
+instance.interceptors.request.use(
+  (res) => {
+    return res;
+  },
+  async function (error) {
+    console.log("hello");
+    console.log(error);
+    const originalRequest = error.config;
+    if (error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      const authStore = useAuthStore();
+      await authStore.refreshToken();
+      // const access_token = await authStore.refreshToken();
+      // axios.defaults.headers.common["Authorization"] = "Bearer " + access_token;
+      location.reload();
+      return [null, await axios.request(originalRequest)];
+    }
+    return Promise.reject(error);
+  }
+);
+
 // axios.interceptors.response.use(
 //   //onFulfilled
 //   (response) => response,
