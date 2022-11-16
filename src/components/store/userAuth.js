@@ -8,7 +8,7 @@ export const useAuthStore = defineStore("authentication", {
   state: () => ({
     token: "",
     // initialize state from local storage to enable user to stay logged in
-    user: JSON.parse(localStorage.getItem("user")),
+    // user: JSON.parse(localStorage.getItem("user")),
     errorLogIn: false,
     isAuthenticated: false,
   }),
@@ -70,9 +70,8 @@ export const useAuthStore = defineStore("authentication", {
       });
       var existing = localStorage.getItem("user");
       existing = JSON.parse(existing);
-      console.log(existing.access_token);
       existing["access_token"] = refreshToken.data.access_token;
-      console.log("REFRESHING!", refreshToken.data.access_token);
+      localStorage.removeItem("user");
       localStorage.setItem("user", JSON.stringify(existing));
       return refreshToken.data.access_token;
     },

@@ -21,5 +21,7 @@ const authStore = useAuthStore();
 
 if (localStorage.getItem("user")) {
   authStore.isAuthenticated = true;
+} else {
+  authStore.isAuthenticated = false;
 }
 </script>

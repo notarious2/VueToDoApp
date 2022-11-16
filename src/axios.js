@@ -7,25 +7,26 @@ import { useAuthStore } from "../src/components/store/userAuth.js";
 axios.defaults.baseURL = "https://web-production-b464.up.railway.app";
 
 // axios interceptor for specific URL - instance
-// var instance = axios.create({
-//   baseURL: "https://web-production-b464.up.railway.app/task",
-// });
+
 //response interceptor
 axios.interceptors.response.use(
   (res) => {
     return res;
   },
   async function (error) {
-    console.log("hello");
-    console.log(error);
+    // console.log(error);
     const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (
+      error.response.status === 401 &&
+      !originalRequest._retry &&
+      error.request.responseURL === axios.defaults.baseURL + "/task"
+    ) {
       originalRequest._retry = true;
       const authStore = useAuthStore();
-      await authStore.refreshToken();
+      const newAccessToken = await authStore.refreshToken();
       // const access_token = await authStore.refreshToken();
-      // axios.defaults.headers.common["Authorization"] = "Bearer " + access_token;
-      return [null, await axios.request(originalRequest)];
+      originalRequest.headers["Authorization"] = "Bearer " + newAccessToken;
+      return axios.request(originalRequest);
     }
     return Promise.reject(error);
   }

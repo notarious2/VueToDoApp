@@ -11,5 +11,5 @@
 
 module.exports = {
   publicPath: "",
-  // productionSourceMap: false, // to hide source code
+  productionSourceMap: false, // to hide source code
 };
