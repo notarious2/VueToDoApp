@@ -14,7 +14,29 @@ axios.interceptors.response.use(
     return res;
   },
   async function (error) {
-    // console.log(error);
+    const originalRequest = error.config;
+    if (
+      error.response.status === 401 &&
+      !originalRequest._retry &&
+      error.request.responseURL.includes(axios.defaults.baseURL + "/task")
+    ) {
+      originalRequest._retry = true;
+      const authStore = useAuthStore();
+      const newAccessToken = await authStore.refreshToken();
+      // const access_token = await authStore.refreshToken();
+      originalRequest.headers["Authorization"] = "Bearer " + newAccessToken;
+      return axios.request(originalRequest);
+    }
+    return Promise.reject(error);
+  }
+);
+axios.interceptors.request.use(
+  (res) => {
+    return res;
+  },
+  async function (error) {
+    console.log("Request", error.request.responseURL);
+
     const originalRequest = error.config;
     if (
       error.response.status === 401 &&
