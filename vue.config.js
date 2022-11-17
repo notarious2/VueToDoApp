@@ -11,5 +11,14 @@
 
 module.exports = {
   publicPath: "",
-  productionSourceMap: false, // to hide source code
+  productionSourceMap: false, // to hide source cod
+  pluginOptions: {
+    sitemap: {
+      urls: [
+        "https://www.stickydo.us/",
+        "https://www.stickydo.us/login",
+        "https://www.stickydo.us/register",
+      ],
+    },
+  },
 };
