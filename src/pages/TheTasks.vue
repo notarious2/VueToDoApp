@@ -94,6 +94,7 @@
               @keyup="taskStore.clearInvalidInput"
               v-model="enteredText"
               type="text"
+              aria-label="Add task"
             />
             <button class="button-74">add task</button>
           </form>
