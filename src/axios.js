@@ -14,6 +14,7 @@ axios.interceptors.response.use(
     return res;
   },
   async function (error) {
+    // refresh token
     const originalRequest = error.config;
     if (
       error.response.status === 401 &&
@@ -26,6 +27,11 @@ axios.interceptors.response.use(
       // const access_token = await authStore.refreshToken();
       originalRequest.headers["Authorization"] = "Bearer " + newAccessToken;
       return axios.request(originalRequest);
+    }
+    // other errors such as token does not exist -> after user was deleted
+    else if (error.response.data.detail === "Could not validate credentials") {
+      const authStore = useAuthStore();
+      authStore.logout();
     }
     return Promise.reject(error);
   }

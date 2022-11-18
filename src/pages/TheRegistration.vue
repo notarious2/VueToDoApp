@@ -3,19 +3,34 @@
     <form @submit.prevent="submitRegistrationDetails">
       <div class="container">
         <h1>Register</h1>
-        <div class="icon-div">
+        <div class="icon-div" :class="{ isError: errorName }">
           <img src="@/assets/register/user.png" alt="user" class="user-img" />
-          <input type="text" placeholder="Name" required v-model="name" />
+          <input
+            type="text"
+            placeholder="Enter name"
+            v-model="name"
+            @blur="errorName = ''"
+            @keypress="errorName = ''"
+          />
         </div>
-        <div class="icon-div">
+        <span v-if="errorName" class="error">{{ errorName }}<br /></span>
+
+        <div class="icon-div" :class="{ isError: errorEmail }">
           <img
             src="@/assets/register/email.png"
             alt="email"
             class="email-img"
           />
-          <input type="text" placeholder="Email" required v-model="email" />
+          <input
+            type="text"
+            placeholder="Enter email"
+            v-model="email"
+            @blur="errorEmail = ''"
+            @keypress="errorEmail = ''"
+          />
         </div>
-        <div class="icon-div">
+        <span v-if="errorEmail" class="error">{{ errorEmail }}<br /></span>
+        <div class="icon-div" :class="{ isError: errorUsername }">
           <img
             src="@/assets/register/username.png"
             alt="username"
@@ -23,12 +38,17 @@
           />
           <input
             type="text"
-            placeholder="Username"
-            required
+            placeholder="Enter username"
             v-model="username"
+            @blur="errorUsername = ''"
+            @keypress="errorUsername = ''"
           />
         </div>
-        <div class="icon-div">
+        <span v-if="errorUsername" class="error"
+          >{{ errorUsername }}<br
+        /></span>
+
+        <div class="icon-div" :class="{ isError: errorPassword }">
           <img
             src="@/assets/register/password.png"
             alt="password"
@@ -37,9 +57,10 @@
           <input
             id="inline-input"
             :type="passwordType"
-            placeholder="Password"
+            placeholder="Enter password"
             v-model="password"
-            required
+            @blur="errorPassword = ''"
+            @keypress="errorPassword = ''"
           />
           <img
             :src="showPassword ? showUrls[0] : showUrls[1]"
@@ -48,7 +69,7 @@
             @click="toggleShow"
           />
         </div>
-        <div class="icon-div">
+        <div class="icon-div" :class="{ isError: errorPassword }">
           <img
             alt="password-verification"
             class="verification-img"
@@ -61,11 +82,26 @@
           />
           <input
             :type="passwordType"
-            placeholder="Verify Password"
+            placeholder="Re-enter password"
             v-model="passwordConfirmation"
-            required
+            @blur="errorPassword = ''"
+            @keypress="errorPassword = ''"
           />
         </div>
+        <span
+          v-if="errorPassword"
+          class="error"
+          style="margin-top: 5px; display: block"
+          >{{ errorPassword }}</span
+        >
+        <span
+          v-if="errorRegister"
+          class="error"
+          style="margin-top: 5px; display: block"
+        >
+          {{ errorRegister }}</span
+        >
+        <span v-else><br /></span>
         <button class="button-74" type="submit">Submit</button>
       </div>
     </form>
@@ -76,11 +112,21 @@
 import { ref, watch } from "vue";
 import { useAuthStore } from "../components/store/userAuth.js";
 import PostIt from "../components/layout/PostIt.vue";
+import { storeToRefs } from "pinia";
 
 const authStore = useAuthStore();
-
+// pulling registration error from backend
+const { errorRegister } = storeToRefs(authStore);
 const name = ref("");
 const email = ref("");
+const emailRegEx =
+  /^(([^<>()\]\\.,;:\s@"]+(\.[^<>()\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/;
+
+const errorName = ref("");
+const errorEmail = ref("");
+const errorUsername = ref("");
+const errorPassword = ref("");
+
 const username = ref("");
 const password = ref("");
 const passwordConfirmation = ref("");
@@ -106,14 +152,62 @@ function toggleShow() {
   }
 }
 async function submitRegistrationDetails() {
-  const payload = {
-    name: name.value,
-    email: email.value,
-    username: username.value,
-    password: password.value,
-  };
-  authStore.register(payload);
+  // validate name
+  if (name.value === "") {
+    errorName.value = "Please Enter Name";
+  } else {
+    errorName.value = "";
+  }
+
+  // validate email
+  if (email.value === null || email.value === "") {
+    errorEmail.value = "Please Enter Email";
+  } else if (!emailRegEx.test(email.value)) {
+    errorEmail.value = "Please Enter Valid Email";
+  } else {
+    errorEmail.value = "";
+  }
+
+  // validate username
+  if (username.value === "") {
+    errorUsername.value = "Please Enter Username";
+  } else {
+    errorUsername.value = "";
+  }
+
+  // validate passwords match
+  if (password.value === "" || passwordConfirmation.value === "") {
+    errorPassword.value = "Please Enter Password";
+  } else if (password.value !== passwordConfirmation.value) {
+    errorPassword.value = "Passwords do not match";
+  } else {
+    errorPassword.value = "";
+  }
+
+  // checking all errors at once
+  let errorsArray = [
+    errorName.value,
+    errorEmail.value,
+    errorUsername.value,
+    errorPassword.value,
+  ];
+  const checker = (arr) => arr.every((arr) => arr === "");
+
+  if (checker(errorsArray)) {
+    const payload = {
+      name: name.value,
+      email: email.value,
+      username: username.value,
+      password: password.value,
+    };
+    authStore.register(payload);
+  }
 }
+
+// Clear error from backend if any of the inputs change
+watch([name, username, email, password, passwordConfirmation], () => {
+  errorRegister.value = false;
+});
 
 watch([password, passwordConfirmation], () => {
   if (passwordConfirmation.value !== password.value) {
@@ -194,6 +288,13 @@ watch([password, passwordConfirmation], () => {
   position: relative;
   left: 50%;
   transform: translateX(-50%);
+}
+
+.error {
+  color: red;
+}
+.isError {
+  border: 0.5px solid red;
 }
 
 .button-74 {

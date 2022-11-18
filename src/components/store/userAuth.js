@@ -11,6 +11,7 @@ export const useAuthStore = defineStore("authentication", {
     // user: JSON.parse(localStorage.getItem("user")),
     errorLogIn: false,
     isAuthenticated: false,
+    errorRegister: false,
   }),
   actions: {
     async login(username, password) {
@@ -55,6 +56,7 @@ export const useAuthStore = defineStore("authentication", {
         })
         .catch((error) => {
           console.log(error);
+          this.errorRegister = error.response.data.detail;
         });
     },
     logout() {
