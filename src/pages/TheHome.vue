@@ -13,7 +13,6 @@
 import { defineAsyncComponent } from "vue";
 
 import { useAuthStore } from "../components/store/userAuth";
-console.log(process.env.VUE_APP_BACKEND_URL);
 
 const TheDashboard = defineAsyncComponent(() => import("./TheDashboard.vue"));
 const TheTasks = defineAsyncComponent(() => import("./TheTasks.vue"));
