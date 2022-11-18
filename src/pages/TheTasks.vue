@@ -178,6 +178,7 @@ if (tasksSlice.value.length > 0) {
 onMounted(async () => {
   tasksList.value = await taskStore.loadTasks();
   taskStore.loadOneTask(date.value);
+  console.log(process.env.VUE_APP_BACKEND_URL);
 });
 
 watch([tasksSlice], () => {

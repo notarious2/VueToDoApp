@@ -4,7 +4,7 @@ import { useAuthStore } from "../src/components/store/userAuth.js";
 
 // axios.defaults.baseURL = "https://fastapi-todo-heroku.herokuapp.com/";
 // axios.defaults.baseURL = "http://127.0.0.1:8000/";
-axios.defaults.baseURL = "https://web-production-b464.up.railway.app";
+axios.defaults.baseURL = process.env.VUE_APP_BACKEND_URL;
 
 // axios interceptor for specific URL - instance
 
