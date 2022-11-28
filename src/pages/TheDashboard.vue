@@ -41,17 +41,27 @@
             class="slide-3 swiper-lazy"
             rel="preload" /></swiper-slide
       ></swiper>
-      <post-it id="registration-form">
-        <div class="inner-registration-form">
-          <p><strong> Join for Free </strong></p>
-          <button
-            @click="router.push({ name: 'Registration' })"
-            class="button-74"
-          >
-            Register
-          </button>
-        </div>
-      </post-it>
+      <div class="linksbox">
+        <post-it id="registration-form">
+          <div class="inner-registration-form">
+            <p><strong> Try Demo. No registration required! </strong></p>
+            <button @click="router.push({ name: 'Demo' })" class="button-74">
+              Demo
+            </button>
+          </div>
+        </post-it>
+        <post-it id="registration-form">
+          <div class="inner-registration-form">
+            <p><strong> Join for Free </strong></p>
+            <button
+              @click="router.push({ name: 'Registration' })"
+              class="button-74"
+            >
+              Register
+            </button>
+          </div>
+        </post-it>
+      </div>
     </div>
   </main>
   <the-footer class="footer"></the-footer>
@@ -101,6 +111,9 @@ const router = useRouter();
   height: 50%;
   margin-bottom: 15px;
 }
+.linksbox {
+  display: flex;
+}
 #registration-form {
   display: flex;
   width: 70%;
@@ -108,13 +121,15 @@ const router = useRouter();
   align-items: center;
 
   padding: 0px;
-  margin-left: auto;
-  margin-right: auto;
+  margin-left: 10px;
+  margin-right: 10px;
   margin-bottom: 3rem;
 }
+
 .inner-registration-form {
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 main {
   display: flex;
