@@ -168,7 +168,6 @@ if (tasksSlice.value.length > 0) {
     (ob) => !ob.completed
   ).length;
 }
-console.log("Completed", completedTasks.value);
 
 watch(
   [tasksSlice],

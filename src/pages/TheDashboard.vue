@@ -45,7 +45,13 @@
         <post-it id="registration-form">
           <div class="inner-registration-form">
             <p><strong> Try Demo. No registration required! </strong></p>
-            <button @click="router.push({ name: 'Demo' })" class="button-74">
+            <button
+              @click="
+                router.push({ name: 'Demo' });
+                demoAnalytics();
+              "
+              class="button-74"
+            >
               Demo
             </button>
           </div>
@@ -54,7 +60,10 @@
           <div class="inner-registration-form">
             <p><strong> Join for Free </strong></p>
             <button
-              @click="router.push({ name: 'Registration' })"
+              @click="
+                router.push({ name: 'Registration' });
+                registerAnalytics();
+              "
               class="button-74"
             >
               Register
@@ -71,6 +80,7 @@
 import { ref } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import PostIt from "../components/layout/PostIt.vue";
+import { event } from "vue-gtag";
 
 import SwiperCore, {
   Navigation,
@@ -92,6 +102,21 @@ import { useRouter } from "vue-router";
 SwiperCore.use([Navigation, Pagination, Scrollbar, A11y, Autoplay, Lazy]);
 const modules = ref([Navigation, Pagination, Scrollbar, A11y, Autoplay, Lazy]);
 const router = useRouter();
+
+function demoAnalytics() {
+  event("demo-button-clicked", {
+    event_category: "analytics",
+    event_label: "Demo button pressed",
+    value: 1,
+  });
+}
+function registerAnalytics() {
+  event("register-button-clicked", {
+    event_category: "analytics",
+    event_label: "Register button pressed",
+    value: 1,
+  });
+}
 </script>
 
 <style scoped>
