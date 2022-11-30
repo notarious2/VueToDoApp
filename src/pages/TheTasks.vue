@@ -402,6 +402,9 @@ h1 {
   flex: 1;
   line-height: 12pt;
 }
+.flex-text p {
+  outline: none;
+}
 p {
   margin-block-start: 10px;
   margin-block-end: 0px;
